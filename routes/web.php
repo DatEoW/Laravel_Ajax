@@ -17,10 +17,12 @@ use App\Http\Controllers\AuthController;
 
 Route::get('', function () {
     return view('index');
-});
+})->middleware(['auth']);
 
 Route::get('/login',[AuthController::class,'to_login'])->name('to_login');
 Route::post('/login',[AuthController::class,'login'])->name('login');
+Route::delete('/logout',[AuthController::class,'logout'])->name('logout')->middleware('auth');
+
 
 
 

@@ -22,60 +22,35 @@ class AuthController extends Controller
             'password'=>$request->password
         ];
         $data=$request->all();
-        // dd($data);
-        // $ip=$request->ip();
-        // dd($ip);
-    //     $validator = Validator::make($input, [
-    //         'email' => 'required|email',
-    //         'password' => 'required',
-    //     ],
-    //     [
-    //         'required' => ':attribute Không được để trống.',
-    //         'password' => ':attribute Phải là số dương',
-
-    //     ], [
-    //         'email' => 'Email',
-    //         'password' => 'Mật Khẩu',
-    //     ]
 
 
+        $remember_me = $request->has('remember_me') ? true : false;
 
-    // );
-        // dd($input);
-        // if($validator->fails()){
-        //     // dd($validator->errors());
-        //     return back()->with('error',$validator->errors());
-        // }
+        if (Auth::viaRemember()) {
+            return redirect('')->with('success','Đăng nhập thành công');
+        }
 
-        if(Auth::attempt($input)){
+        if((Auth::attempt(['email' => $request->email, 'password' => $request->password], $remember_me))||Auth::viaRemember()){
             $user=User::where('email',$request->email)->first();
             $now=Carbon::now();
             $user->last_login_at=$now;
             $user->last_login_ip=$request->ip();
+            // $user->remember_token=$request->_token;
+            // if(isset($data['remember'])&& !empty($data['remember'])){
 
-
-            if(isset($data['remember'])&& !empty($data['remember'])){
-
-                $user->remember_token=$request->_token;
-
-
-                setcookie('email',$data['email'],time()+3600);
-                setcookie('password',$data['password'],time()+3600);
-            }
-            else{
-                setcookie('email','');
-                setcookie('password','');
-            }
+            // }
             $user->save();
+
             return redirect('')->with('success','Đăng nhập thành công');
         }
+        else{
 
+        }
         return back()->with('error','Email hoặc Password sai');
-
-
-
-
-
+    }
+    public function logout(){
+        Auth::logout();
+        return redirect()->route('login');
     }
 
 }

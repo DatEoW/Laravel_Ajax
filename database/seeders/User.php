@@ -14,7 +14,7 @@ class User extends Seeder
     public function run(): void
     {
         for ($i=0; $i<5; $i++) {
-            DB::table('users')->insert([
+            DB::table('mst_users')->insert([
                 'name' => 'Đạt ' . rand(0,10),
                 'email'=>'datbandat'.$i.rand(0,10).'@gmail.com',
                 'is_active'=>1,

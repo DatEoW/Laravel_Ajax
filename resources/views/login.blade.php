@@ -49,33 +49,42 @@
                                             {{ Session::get('error') }}
                                         </div>
                                     @endif
-                                    @error('password')
-                                        <div class="alert alert-danger" role="alert">
-                                            {{ $message }}
-                                        </div>
-                                    @enderror
+
                                     <div>
 
                                     </div>
-                                    <form id="myForm" class="user" action="{{ route('login') }}" method="post">
-
+                                    <form class="user" action="{{ route('login') }}" method="post">
+                                        @csrf
                                         <div class="form-group">
-                                            <input type="email" name="email" class="form-control form-control-user"
+                                            <input type="text" name="email" class="form-control form-control-user"
                                                 id="exampleInputEmail" aria-describedby="emailHelp"
                                                 placeholder="Nhập Email"
-                                                @if (isset($_COOKIE['email'])) value={{ $_COOKIE['email'] }} @endif>
+                                                >
+                                                @error('email')
+                                                <div class="alert" role="alert" style="color: red">
+                                                    *{{ $message }}
+                                                </div>
+                                                @enderror
                                         </div>
+
                                         <div class="form-group">
                                             <input type="password" name="password"
                                                 class="form-control form-control-user" id="exampleInputPassword"
                                                 placeholder="Nhập mật khẩu"
-                                                @if (isset($_COOKIE['password'])) value={{ $_COOKIE['password'] }} @endif>
+                                                >
+                                                @error('password')
+                                                <div class="alert" role="alert" style="color: red">
+                                                    *{{ $message }}
+                                                </div>
+                                            @enderror
                                         </div>
+
+
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox small">
                                                 <input type="checkbox" class="custom-control-input"
-                                                    id="customCheck"name="remember"
-                                                    @if (isset($_COOKIE['email'])) checked="" @endif>
+                                                    id="customCheck"name="remember_me"
+                                                   >
                                                 <label class="custom-control-label" for="customCheck">Remember
                                                     Me</label>
                                             </div>
@@ -90,15 +99,11 @@
                                         <a href="index.html" class="btn btn-facebook btn-user btn-block">
                                             <i class="fab fa-facebook-f fa-fw"></i> Login with Facebook
                                         </a>
-                                        @csrf
+
+
+
                                     </form>
-                                    <script type="text/javascript">
-                                        $.ajaxSetup({
-                                                headers: {
-                                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                                                }
-                                            });
-                                    </script>
+
                                     <hr>
                                     <div class="text-center">
                                         <a class="small" href="forgot-password.html">Forgot Password?</a>

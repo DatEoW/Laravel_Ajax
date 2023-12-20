@@ -29,6 +29,7 @@ class LoginRequest extends FormRequest
     public function messages()
     {
         return [
+            'email.email' => 'Email không đúng định dạng',
             'email.required' => 'Email không được bỏ trống',
             'password.required' => 'Mật khẩu không được bỏ trống',
 
