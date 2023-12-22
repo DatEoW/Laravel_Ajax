@@ -43,13 +43,6 @@
                                     <div class="text-center">
                                         <h1 class="h4 text-gray-900 mb-4">Welcome Back!</h1>
                                     </div>
-
-                                    @if (Session::has('error'))
-                                        <div class="alert alert-danger" role="alert">
-                                            {{ Session::get('error') }}
-                                        </div>
-                                    @endif
-
                                     <div>
 
                                     </div>
@@ -65,6 +58,11 @@
                                                     *{{ $message }}
                                                 </div>
                                                 @enderror
+                                                @if (Session::has('error_email'))
+                                                <div class="alert" role="alert" style="color: red">
+                                                    *{{ Session::get('error_email') }}
+                                                </div>
+                                                @endif
                                         </div>
 
                                         <div class="form-group">
@@ -76,14 +74,19 @@
                                                 <div class="alert" role="alert" style="color: red">
                                                     *{{ $message }}
                                                 </div>
-                                            @enderror
+                                                @enderror
+                                                @if (Session::has('error_password'))
+                                                <div class="alert" role="alert" style="color: red">
+                                                    *{{ Session::get('error_password') }}
+                                                </div>
+                                                @endif
                                         </div>
 
 
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox small">
                                                 <input type="checkbox" class="custom-control-input"
-                                                    id="customCheck"name="remember_me"
+                                                    id="customCheck" name="remember_me"
                                                    >
                                                 <label class="custom-control-label" for="customCheck">Remember
                                                     Me</label>
@@ -93,12 +96,7 @@
 
 
                                         <hr>
-                                        <a href="index.html" class="btn btn-google btn-user btn-block">
-                                            <i class="fab fa-google fa-fw"></i> Login with Google
-                                        </a>
-                                        <a href="index.html" class="btn btn-facebook btn-user btn-block">
-                                            <i class="fab fa-facebook-f fa-fw"></i> Login with Facebook
-                                        </a>
+
 
 
 
