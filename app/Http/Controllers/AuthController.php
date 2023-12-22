@@ -17,39 +17,28 @@ class AuthController extends Controller
     }
 
     public function login(LoginRequest $request){
-        $input=[
-            'email'=>$request->email,
-            'password'=>$request->password
-        ];
-        $data=$request->all();
-
-
-        $remember_me = $request->has('remember_me') ? true : false;
-
-        if (Auth::viaRemember()) {
-            return redirect('')->with('success','Đăng nhập thành công');
+        //check mail
+        $user=User::where('email',$request->email)->first();
+        $now=Carbon::now();
+        if(empty($user)){
+            return back()->with('error_email','Email không chính xác');
         }
-
-        if((Auth::attempt(['email' => $request->email, 'password' => $request->password], $remember_me))||Auth::viaRemember()){
-            $user=User::where('email',$request->email)->first();
-            $now=Carbon::now();
+        $remember_me = $request->has('remember_me') ? true : false;
+        if(Auth::attempt(['email' => $request->email, 'password' => $request->password],$remember_me)){
             $user->last_login_at=$now;
             $user->last_login_ip=$request->ip();
-            // $user->remember_token=$request->_token;
-            // if(isset($data['remember'])&& !empty($data['remember'])){
-
-            // }
             $user->save();
-
-            return redirect('')->with('success','Đăng nhập thành công');
+            //tăng cường bảo mật
+            $request->session()->regenerate();
+            return redirect('')->with('user',Auth::user());
         }
-        else{
 
-        }
-        return back()->with('error','Email hoặc Password sai');
+        return back()->with('error_password','Mật khẩu không chính xác');
     }
-    public function logout(){
+    public function logout(Request $request){
         Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
         return redirect()->route('login');
     }
 

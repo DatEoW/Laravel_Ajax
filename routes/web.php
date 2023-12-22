@@ -17,7 +17,7 @@ use App\Http\Controllers\AuthController;
 
 Route::get('', function () {
     return view('index');
-})->middleware(['auth']);
+})->middleware(['auth','auth.session']);
 
 Route::get('/login',[AuthController::class,'to_login'])->name('to_login');
 Route::post('/login',[AuthController::class,'login'])->name('login');
