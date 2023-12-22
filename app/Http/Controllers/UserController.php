@@ -5,17 +5,26 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\UserRequest;
+use DataTables;
 
 class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $user=User::orderBy('created_at','desc')->get();
+        // dd($user);
+        if($request->ajax()){
+            return DataTables::of($user)
+            ->addColumn('action',function(){
+                return '<a href="" class=""btn btn-info><i class="fas fa-edit"></i></a>';
+            })
 
-            $user=User::orderBy('updated_at','desc')->paginate($perPage = 5, $columns = ['*'], $pageName = 'users');
-            return view('list_user',compact('user'));
+            ->make(true);
+        }
+
 
 
     }
@@ -33,6 +42,7 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
+        // return $request->all();
         $input=[
             'name'=>$request->name,
             'password'=>$request->password,
@@ -42,13 +52,11 @@ class UserController extends Controller
         ];
         $validator = $request->validate([
             'name' => 'required',
-            'password' => 'required|between:6,10',
+            'password' => 'required',
             'email' => 'required|unique:mst_users|email',
 
         ], [
             'required' => ':attribute Không được để trống',
-
-            'between' => ':attribute Phải là số dương ',
             'unique' => ':attribute Không được trùng'
         ], [
             'name' => 'Tên',
@@ -56,13 +64,10 @@ class UserController extends Controller
             'email' => 'Email',
 
         ]);
-
-
-
-
-
-        $user=User::create($input);
-        return back()->with('error_code ',5);
+        // $user=User::create($input);
+        return response()->json([
+            'success'=>'Thêm thành viên mới thành công !',
+        ],201);
 
     }
 
