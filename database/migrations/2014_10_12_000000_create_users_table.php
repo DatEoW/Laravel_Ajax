@@ -19,7 +19,6 @@ return new class extends Migration
             $table->boolean('is_active');
             $table->boolean('is_delete');
             $table->tinyInteger('group');
-            $table->boolean('role');
             $table->timestamp('last_login_at')->nullable();
             $table->string('last_login_ip',40)->nullable();
             $table->timestamp('email_verified_at')->nullable();
