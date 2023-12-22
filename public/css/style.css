@@ -1,0 +1,46 @@
+.form_search{
+    display: flex;
+    gap:20px;
+    flex-wrap: wrap;
+    padding: 20px 40px 20px 40px;
+    justify-content: space-between;
+}
+.form_search p{
+
+    margin-bottom: 3px;
+
+}
+.add_user{
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+}
+.fa-user-plus:before{
+    border:1px solid black;
+    font-size: 20px;
+    padding: 4px;
+    /* margin: 0; */
+}
+.fa-magnifying-glass{
+    border:1px solid black;
+    font-size: 20px;
+    padding: 4px;
+}
+.right-button{
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 50px;
+}
+.right-button div{
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.right-button input{
+    width: 70px
+}
+.btn-add-user{
+    padding: 3px !important;
+}

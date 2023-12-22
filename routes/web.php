@@ -2,7 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\UserController1;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,6 +19,17 @@ use App\Http\Controllers\AuthController;
 Route::get('', function () {
     return view('index');
 })->middleware(['auth']);
+Route::resource('user', Usercontroller::class,);
+
+Route::get('/list-user',[Usercontroller::class,'list_user'])->name('list-user');
+
+
+
+
+
+
+
+
 
 Route::get('/login',[AuthController::class,'to_login'])->name('to_login');
 Route::post('/login',[AuthController::class,'login'])->name('login');

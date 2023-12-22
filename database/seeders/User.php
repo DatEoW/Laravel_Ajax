@@ -13,7 +13,7 @@ class User extends Seeder
      */
     public function run(): void
     {
-        for ($i=0; $i<5; $i++) {
+        for ($i=10; $i<60; $i++) {
             DB::table('mst_users')->insert([
                 'name' => 'Đạt ' . rand(0,10),
                 'email'=>'datbandat'.$i.rand(0,10).'@gmail.com',
