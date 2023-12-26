@@ -19,6 +19,7 @@ class User extends Seeder
                 'email'=>'datbandat'.$i.rand(0,10).'@gmail.com',
                 'is_active'=>1,
                 'is_delete'=>1,
+                'group'=>rand(0,2),
                 'password'=>bcrypt('hihi'),
             ]);
          }

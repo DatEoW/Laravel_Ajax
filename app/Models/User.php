@@ -26,6 +26,7 @@ class User extends Authenticatable
         'last_login_ip',
         'is_active',
         'is_delete',
+        'group',
     ];
 
     /**

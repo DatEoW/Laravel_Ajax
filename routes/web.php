@@ -21,7 +21,12 @@ Route::get('', function () {
 })->middleware(['auth']);
 Route::resource('user', Usercontroller::class,);
 
+
+Route::post('/update-user/{id}',[Usercontroller::class,'updateUser']);
+Route::get('/search_user',[Usercontroller::class,'search_user'])->name('search_user');
+
 Route::get('/list-user',[Usercontroller::class,'list_user'])->name('list-user');
+
 
 
 
