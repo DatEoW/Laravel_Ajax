@@ -17,15 +17,17 @@ use App\Http\Controllers\UserController1;
 */
 
 Route::get('', function () {
-    return view('index');
+    return view('user_um');
 })->middleware(['auth']);
-Route::resource('user', Usercontroller::class,);
+Route::resource('user', UserController::class,);
 
 
-Route::post('/update-user/{id}',[Usercontroller::class,'updateUser']);
-Route::get('/search_user',[Usercontroller::class,'search_user'])->name('search_user');
+Route::post('/update-user/{id}',[UserController::class,'updateUser']);
+Route::get('/search_user',[UserController::class,'search_user'])->name('search_user');
 
-Route::get('/list-user',[Usercontroller::class,'list_user'])->name('list-user');
+Route::get('/list-user',[UserController::class,'list_user'])->name('list-user');
+
+Route::post('/deleteUser',[UserController::class,'deleteUser'])->name('deleteUser');
 
 
 

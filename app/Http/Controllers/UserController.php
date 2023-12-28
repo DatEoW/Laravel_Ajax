@@ -15,13 +15,16 @@ class UserController extends Controller
     public function index(Request $request)
     {
         // $perPage=$request->perPage;
+
         $perPage=$request->perPage ?? 10;
         $name=$request->name ?? 0;
         $email=$request->email ?? 0;
-        $is_active=$request->is_active ?? 1;
-
-        $user=User::orderBy('created_at','desc')->where('is_delete',1);
-        // dd($request->group_role);
+        $is_active=$request->is_active;
+        $search_active=$request->is_active ?? 2;
+        $user=User::orderBy('id','desc')->where('is_delete',1);
+        if($search_active!=2){
+            $user=$user->where('is_active',$is_active);
+        }
         if(!empty($name)){
             $user=$user->where('name','like' ,"%$name%");
         }
@@ -29,13 +32,8 @@ class UserController extends Controller
             $user=$user->where('email','like',"%$email%");
         }
 
-        $user=$user->where('is_active',$is_active);
-
-        if(isset($request->group_role)){
-
+        if(isset($request->group_role)&&($request->group_role!=3)){
                 $user=$user->where('group_role',$request->group_role);
-
-
         }
         $paginate = $user->paginate($perPage);
         $paginate->getCollection()->transform(function($user){
@@ -52,7 +50,8 @@ class UserController extends Controller
         if($request->ajax()){
             return response()->json([$paginate],201);
         }
-        return response()->json([$paginate],201);
+        return view('user_um');
+
     }
 
     /**
@@ -68,7 +67,6 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->all());
         if($request->ajax()){
             $input=[
                 'name'=>$request->name,
@@ -76,20 +74,24 @@ class UserController extends Controller
                 'email'=>$request->email,
                 'is_active'=>1,
                 'is_delete'=>1,
-                'group'=>1,
+                'group_role'=>$request->group_role,
             ];
             $validator = $request->validate([
                 'name' => 'required',
                 'password' => 'required',
                 'email' => 'required|unique:mst_users|email',
+                'group_role'=>'required',
+
 
             ], [
                 'required' => ':attribute Không được để trống',
-                'unique' => ':attribute Không được trùng'
+                'unique' => ':attribute Không được trùng',
+                'email'=> ':attribute Phải là định dạng email'
             ], [
                 'name' => 'Tên',
                 'password' => 'Mật khẩu',
                 'email' => 'Email',
+                'group_role'=>'Nhóm'
 
             ]);
             $user=User::create($input);
@@ -125,38 +127,40 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request)
     {
+        $id=$request->id;
         $user=User::find($id);
+        // dd($user);
       if($request->ajax()){
-        $input=[
-            'name'=>$request->name,
-            'password'=>$request->password,
-            'email'=>$request->email,
-            'is_active'=>1,
-            'is_delete'=>1,
-            'group'=>1,
-        ];
+        $name=$request->name ?? $user->name;
+        $email=$request->email ?? $user->email;
+        $password=$request->password ?? $user->password;
+        $is_active=$request->is_active ?? 1;
+
+        $group_role=$request->group_role;
         $validator = $request->validate([
             'name' => 'required',
             'password' => 'required',
-            'email' => 'required|unique:mst_users|email',
-
+            'email' => 'required|email',
         ], [
             'required' => ':attribute Không được để trống',
-            'unique' => ':attribute Không được trùng'
+            'unique' => ':attribute Không được trùng',
+            'email'=> ':attribute Phải là định dạng email'
         ], [
             'name' => 'Tên',
             'password' => 'Mật khẩu',
             'email' => 'Email',
 
         ]);
-        $user->name=$input['name'];
-        $user->email=$input['email'];
-        $user->password=$input['password'];
-        $user->is_active=$user->is_active+0;
-        $user->is_delete=$user->is_delete+0;
-        $user->group=$user->group+0;
+        $user->name=$name;
+        $user->email=$email;
+        $user->password=$password;
+        $user->is_active=$is_active;
+
+        if(isset($request->group_role)){
+            $user->group_role=$group_role;
+        }
         $user->save();
         return response()->json([
             'success'=>'Cập nhật thành viên thành công !',
@@ -164,44 +168,7 @@ class UserController extends Controller
       }
 
     }
-    public function updateUser(Request $request, $id){
-        $user=User::find($id);
-      if($request->ajax()){
-        $input=[
-            'name'=>$request->name,
-            'password'=>$request->password,
-            'email'=>$request->email,
-            'is_active'=>1,
-            'is_delete'=>1,
-            'group'=>1,
-        ];
-        $validator = $request->validate([
-            'name' => 'required',
-            'password' => 'required',
-            'email' => 'required',
 
-        ], [
-            'required' => ':attribute Không được để trống',
-
-        ], [
-            'name' => 'Tên',
-            'password' => 'Mật khẩu',
-            'email' => 'Email',
-
-        ]);
-        $user->name=$input['name'];
-        $user->email=$input['email'];
-        $user->password=$input['password'];
-        $user->is_active=$user->is_active+0;
-        $user->is_delete=$user->is_delete+0;
-        $user->group=$user->group+0;
-        $user->save();
-        return response()->json([
-            'success'=>'Cập nhật thành viên thành công !',
-        ],201);
-      }
-
-    }
 
     /**
      * Remove the specified resource from storage.
@@ -210,41 +177,24 @@ class UserController extends Controller
     {
         //
     }
-    public function search_user (Request $request){
-        if($request->ajax()){
-            $input=$request->all();
-            // dd($input);
-            $query=\DB::table('mst_users');
+    public function deleteUser(Request $request){
 
-            if(!empty($input['name'])&&isset($input['name'])){
-
-                $query=$query->where('name',$input['name']);
-            }
-            $query=$query->orderBy('created_at','desc')->paginate(50)->getCollection()->transform(function($user){
-                $user->active_text = $user->is_active ? 'Đang hoạt động' : 'Tạm khóa';
-                if($user->group==0){
-                    $user->group_text='Admin';
-                }else if($user->group==1){
-                    $user->group_text='Editor';
-                }else if($user->group==2){
-                    $user->group_text='Reviewer';
-                }else{
-                    $user->group_text='None';
-                }
-                    return $user;
-            });
-            return DataTables::of($query)
-            ->addColumn('action',function($row){
-                return '<a href="javascript:void(0)" data-id="'.$row->id.'" class="btn btn-info editButton" data-bs-toggle="modal"
-                data-bs-target="#updateModal" ><i class="fas fa-edit"></i></a>
-                <a href="javascript:void(0)" data-id="'.$row->id.'" class="btn btn-danger" data-bs-toggle="modal"
-                data-id="'.$row->id.'"><i class="fas fa-cancel"></i></a>'
-                ;
-            })
-
-            ->make(true);
-
+        $user=User::find($request->id);
+        $phuongThuc=$request->phuongThuc;
+        if($phuongThuc==='delete'){
+            $user->is_delete=0;
+            $user->save();
         }
+        if($phuongThuc==='lock'){
+            $user->is_active=0;
+            $user->save();
+        }
+        if($phuongThuc==='unlock'){
+            $user->is_active=1;
+            $user->save();
+        }
+        // dd($user->is_active);
 
+        return response()->json(['phuongThuc'=>$phuongThuc],201);
     }
 }

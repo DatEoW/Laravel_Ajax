@@ -20,8 +20,9 @@ class AuthController extends Controller
         //check mail
         $user=User::where('email',$request->email)->first();
         $now=Carbon::now();
+        // dd($user);
         if(empty($user)){
-            return back()->with('error_email','Email không chính xác');
+            return back()->with('error_email','Email không chính xác')->withInput($request->input());
         }
         $remember_me = $request->has('remember_me') ? true : false;
         if(Auth::attempt(['email' => $request->email, 'password' => $request->password],$remember_me)){
@@ -30,10 +31,10 @@ class AuthController extends Controller
             $user->save();
             //tăng cường bảo mật
             $request->session()->regenerate();
-            return redirect('')->with('user',Auth::user());
+            return redirect()->route('product.index')->with('user',Auth::user());
         }
 
-        return back()->with('error_password','Mật khẩu không chính xác');
+        return back()->with('error_password','Mật khẩu không chính xác')->withInput($request->input());
     }
     public function logout(Request $request){
         Auth::logout();

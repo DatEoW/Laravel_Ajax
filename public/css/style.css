@@ -10,10 +10,10 @@
     display: flex;
     flex-wrap: wrap;
 }
-.form_search select{
+/* .form_search select{
     width: 181px;
     height: 28px;
-}
+} */
 /* .form_search i{
     font-size: 25px;
     padding: 5px;

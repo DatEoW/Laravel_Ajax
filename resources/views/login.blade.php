@@ -43,30 +43,31 @@
                                     <div class="text-center">
                                         <h1 class="h4 text-gray-900 mb-4">Welcome Back!</h1>
                                     </div>
-                                    <div>
+                                   <div>
 
                                     </div>
                                     <form class="user" action="{{ route('login') }}" method="post">
                                         @csrf
                                         <div class="form-group">
-                                            <input type="text" name="email" class="form-control form-control-user"
+                                            <input type="text" value="{{ old('email') }}" name="email" class="form-control form-control-user"
                                                 id="exampleInputEmail" aria-describedby="emailHelp"
                                                 placeholder="Nhập Email"
                                                 >
-                                                @error('email')
-                                                <div class="alert" role="alert" style="color: red">
-                                                    *{{ $message }}
-                                                </div>
-                                                @enderror
                                                 @if (Session::has('error_email'))
                                                 <div class="alert" role="alert" style="color: red">
                                                     *{{ Session::get('error_email') }}
                                                 </div>
                                                 @endif
+                                                @error('email')
+                                                <div class="alert" role="alert" style="color: red">
+                                                    *{{ $message }}
+                                                </div>
+                                                @enderror
+
                                         </div>
 
                                         <div class="form-group">
-                                            <input type="password" name="password"
+                                            <input type="password" name="password" 
                                                 class="form-control form-control-user" id="exampleInputPassword"
                                                 placeholder="Nhập mật khẩu"
                                                 >
