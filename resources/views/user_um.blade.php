@@ -380,6 +380,8 @@ aria-hidden="true" role="dialog">
 
                         `);
                     }
+
+                   
                     for (let i = 0; i < links.length; i++) {
                         //lấy số trang
                         const page = links[i]?.url?.split('page=').at(1);

@@ -12,13 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('mst_products', function (Blueprint $table) {
-            $table->increments('id');
+            $table->string('id', 12)->primary();
             $table->string('name');
             $table->string('describe')->nullable();
-            $table->integer('price')->nullable();
-            $table->boolean('status');
+            $table->integer('price');
+            $table->boolean('is_sales');
             $table->boolean('is_delete');
-            $table->string('url_img')->nullable();
+            $table->string('img')->nullable();
             $table->timestamps();
         });
     }

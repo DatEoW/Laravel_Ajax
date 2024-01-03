@@ -15,6 +15,8 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.ckeditor.com/ckeditor5/40.2.0/classic/ckeditor.js"></script>
+
 
     {{-- <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script> --}}
 
@@ -27,13 +29,13 @@
 
 
     {{-- header --}}
-    <nav class="navbar bg-body-tertiary">
+    <nav class="navbar bg-body-tertiary container-fluid">
         <div class="container-fluid text-center" style="background-color:black">
             <a class="navbar-brand " href="#">
                 <img src="/img/logo.png" alt="Logo" class="d-inline-block align-text-top">
-                RiverCrance
+
             </a>
-            <a href="" id="product" class="btn btn-secondary">Product</a>
+            <a href="{{ route('product.index')}}" id="product" class="btn btn-secondary">Product</a>
             <a href="{{ route('user.index') }}" id="user" class="btn btn-secondary">User</a>
             <form action="{{ route('logout') }}" method="post">
                 @csrf

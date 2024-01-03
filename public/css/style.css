@@ -19,4 +19,17 @@
     padding: 5px;
     border: 1px solid black;
 } */
+.content1 span .img{
+    position: absolute;
+    transform: translate(-125%,1%);
+    display: none;
+    z-index: 1;
+    width: 150px !important;
+}
+.content1 span:hover .img{
+    display: block;
+}
+.ck-editor{
+    width:75% !important;
+}
 

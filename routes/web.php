@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserController1;
 
@@ -17,17 +18,16 @@ use App\Http\Controllers\UserController1;
 */
 
 Route::get('', function () {
-    return view('user_um');
+    return view('product_pm');
 })->middleware(['auth']);
-Route::resource('user', UserController::class,);
+Route::resource('user', UserController::class)->middleware(['auth','role']);
+
+Route::post('/deleteUser',[UserController::class,'deleteUser'])->name('deleteUser')->middleware(['auth','role']);
+
+Route::resource('product', ProductController::class)->middleware(['auth']);
 
 
-Route::post('/update-user/{id}',[UserController::class,'updateUser']);
-Route::get('/search_user',[UserController::class,'search_user'])->name('search_user');
 
-Route::get('/list-user',[UserController::class,'list_user'])->name('list-user');
-
-Route::post('/deleteUser',[UserController::class,'deleteUser'])->name('deleteUser');
 
 
 
