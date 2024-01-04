@@ -1,66 +1,42 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Tên Dự Án
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Dự án về quản lý User và Product với đầy đủ các tính năng CRUD với phía Back-end là Laravel và phía Front-end dùng được thực hiện bởi Ajax. Ngoài ra dự án còn có các tính năng khác như phân quyền, đăng nhập, đăng xuất , tìm kiếm theo từ khóa,...
 
-## About Laravel
+## Demo
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Module Login: 
+Chức Năng Validate: Kiểm tra các input nhập vào của email và password như ( không được trống, email đúng định dạng)
+Chức Năng Kiểm tra tài khoản: Kiểm tra email và mật khẩu có hợp lệ,
+Chức năng Renember me: Cập nhật renember_token mỗi khi tích vào check box renember_me ở trang đăng nhập
+Module 2: Tính Năng Quản Lý User
+Chức Năng CRUD: Giao diện phục vụ cho CRUD được tạo nên bởi Ajax khiến việc tương tác với database không tốn quá nhiều thời gian, tạo mới, sửa, xóa , khóa khi click vào sẽ xổ ra 1 popup giúp tiện lợi trong việc chỉnh sửa, phân quyền các tài khoản có quyền với trang User, user không thể tự xóa chính mình 
+Chức Năng tìm kiếm: 
+Module 3: Tính Năng 3
+Chức Năng 3.1: Mô tả chức năng 3.1 của module 3.
+Chức Năng 3.2: Mô tả chức năng 3.2 của module 3.
+Tính Năng 4: Chức Năng 4
+Chức Năng 4.1: Mô tả chức năng 4.1.
+Chức Năng 4.2: Mô tả chức năng 4.2.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Cài Đặt
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Hướng dẫn cài đặt dự án trên máy cục bộ của người sử dụng.
 
-## Learning Laravel
+```bash
+git clone https://redmine.ig.webike.net/gitbucket/git/tran.phat.dat/intern_it58.git
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+cd BAITAP_LARAVEL
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+composer install
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+php artisan migrate
 
-## Laravel Sponsors
+php artisan db:seed --class=User
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+php artisan db:seed --class=Product
 
-### Premium Partners
+php artisan serve
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
 
-## Contributing
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
 
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).

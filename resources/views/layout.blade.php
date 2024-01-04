@@ -11,6 +11,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
@@ -35,19 +37,36 @@
                 <img src="/img/logo.png" alt="Logo" class="d-inline-block align-text-top">
 
             </a>
-            <a href="{{ route('product.index')}}" id="product" class="btn btn-secondary">Product</a>
+            <div class="d-flex" style="gap:20px">
+                <a href="{{ route('product.index') }}" id="product" class="btn btn-secondary">Product</a>
             <a href="{{ route('user.index') }}" id="user" class="btn btn-secondary">User</a>
             <form action="{{ route('logout') }}" method="post">
                 @csrf
                 @method('delete')
                 <button class="btn btn-primary" style="margin:0">Đăng Xuất</button>
             </form>
+            </div>
+
         </div>
     </nav>
+    @if (Session::has('error'))
+   <script>
+    Swal.fire({
+        icon: "error",
+        title: "Truy cập thất bại",
+        text: '{{ Session::get('error') }}',
+        timer:3000,
+        });
+   </script>
+    @endif
     @section('container')
 
     @show
+   <footer>
+        @section('footer')
 
+        @show
+    </footer>
 
 
 

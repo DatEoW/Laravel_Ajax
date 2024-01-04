@@ -22,9 +22,13 @@ Route::get('', function () {
 })->middleware(['auth']);
 Route::resource('user', UserController::class)->middleware(['auth','role']);
 
-Route::post('/deleteUser',[UserController::class,'deleteUser'])->name('deleteUser')->middleware(['auth','role']);
+Route::post('/changeUser',[UserController::class,'changeUser'])->name('changeUser')->middleware(['auth','role']);
 
 Route::resource('product', ProductController::class)->middleware(['auth']);
+
+
+
+
 
 
 

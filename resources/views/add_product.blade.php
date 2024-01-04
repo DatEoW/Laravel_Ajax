@@ -49,7 +49,7 @@
                             <option value="" disabled selected hidden>Chọn trạng thái</option>
                             <option value="1">Đang bán</option>
                             <option value="2">Hết hàng</option>
-                            <option value="3">Ngừng bán</option>
+                            <option value="0">Ngừng bán</option>
                         </select>
 
                     </div>
@@ -85,7 +85,7 @@
 
 
     </form>
-    <script></script>
+
     <script>
         ClassicEditor
             .create(document.querySelector('#editor'))
@@ -233,4 +233,10 @@
 
         });
     </script>
+@endsection
+
+@section('footer')
+    <main class="">
+        <h6 class="text-center" style="font-weight: bold">@ Trần Phát Đạt</h6>
+    </main>
 @endsection

@@ -32,4 +32,10 @@
 .ck-editor{
     width:75% !important;
 }
+footer {
+    color: #333;
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+}
 

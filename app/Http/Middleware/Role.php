@@ -19,6 +19,7 @@ class Role
             return $next($request);
         }else{
             return back()->with('error','Bạn không có quyền truy cập User');
+            // abort(403);
         }
     }
 }

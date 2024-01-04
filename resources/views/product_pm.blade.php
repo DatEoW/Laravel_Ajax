@@ -44,8 +44,8 @@ aria-hidden="true" role="dialog">
                 </div>
                 <div class="form-group">
                     <p>Trạng thái</p>
-                    <select name="is_sales" class="form-select" id="getIs_status">
-                        <option value="" disabled selected hidden>Chọn trạng thái</option>
+                    <select name="is_sales" class="form-select" id="getIs_sales">
+                        <option value="3" disabled selected hidden>Chọn trạng thái</option>
                         <option value="1">Đang bán</option>
                         <option value="2">Hết Hàng</option>
                         <option value="0">Ngừng Bán</option>
@@ -56,13 +56,13 @@ aria-hidden="true" role="dialog">
                 <div class="d-flex flex-nowrap justify-content-end" style="align-items: center">
                     <div style="width:30%">
                         <span>Giá bán từ</span>
-                        <input type="text" class="form-control" style="width:90%" name="priceMin">
+                        <input type="text" class="form-control" style="width:90%" name="priceMin" id="getpriceMin">
                     </div>
                     <div style="margin-top: 20px;margin-right:20px">~</div>
                     <div style="width:30%">
                         <span>Giá bán từ</span>
-                        <input type="text" class="form-control" style="width:90%" name="priceMax">
-                    </div>
+                        <input type="text" class="form-control" style="width:90%" name="priceMax" id="getpriceMax">
+                     </div>
                 </div>
             </div>
             <div style="display: flex;gap:80px;flex-wrap: wrap;" class="form_search">
@@ -70,7 +70,7 @@ aria-hidden="true" role="dialog">
                     <a href="{{ route('product.create') }}"
                         style="margin-bottom:40px !important;margin-top:40px;"
 
-                        @if (Auth::user()->group_role >1 ) class="btn btn-info mb-3 disabled" @else class="btn btn-info mb-3" @endif>
+                        class="btn btn-info mb-3">
                         <i class="fa-solid fa-square-plus" style="color:white"></i>
                         Thêm mới</a>
 
@@ -151,7 +151,7 @@ aria-hidden="true" role="dialog">
     let perPage = 10;
     let page = 1;
     let name = '';
-    let is_sales = '';
+    let is_sales = 3;
     let priceMin = '';
     let priceMax = '';
     let search = false;
@@ -175,7 +175,7 @@ aria-hidden="true" role="dialog">
         ) {
 
             $.ajax({
-                url: `{{ route('product.index') }}/?page=${page}&perPage=${perPage}&name=${name}&email=${priceMin}&group_role=${priceMax}&is_active=${is_sales}`,
+                url: `{{ route('product.index') }}/?page=${page}&perPage=${perPage}&name=${name}&priceMin=${priceMin}&priceMax=${priceMax}&is_sales=${is_sales}`,
                 method: 'GET',
                 dataType: 'json',
                 success: function(response) {
@@ -193,11 +193,32 @@ aria-hidden="true" role="dialog">
                     const links = response[0].links ?? [];
                     const items = response[0].data ?? [];
 
-
-                    $('#fromTo').html(null);
-                    $('#fromTo').append(`
-                         <p style="text-align:right;">Hiển thị từ ${from} ~ ${to} trong tổng số <strong class="total">${total}</strong> product</p>
+                     // hiện from- to
+                     if(total<10){
+                            $('#fromTo').html(null);
+                            perPage=total;
+                            $('#fromTo').append(`
+                         <p style="text-align:right;">Hiển thị từ ${from} ~ ${perPage} trong tổng số <strong>${total}</strong> product</p>
                     `);
+                        }if(total===1){
+                            $('#fromTo').html(null);
+                            $('#fromTo').append(`
+                         <p style="text-align:right;">Hiển thị  ${from}  trong tổng số <strong>${total}</strong> product</p>
+                    `);
+                        }if(total>=10){
+                            $('#fromTo').html(null);
+                            $('#fromTo').append(`
+                         <p style="text-align:right;">Hiển thị từ ${from} ~ ${perPage} trong tổng số <strong>${total}</strong> product</p>
+                    `);
+                        }
+                        if(total===0){
+                            $('#fromTo').html(null);
+                            $('#fromTo').append(`
+                         <p style="text-align:right;">Không có sản phẩm hiển thị</strong> product</p>
+                    `   );
+                        }
+
+
                     // tạo bảng table
                     $('#tbody-table').html(null); // để làm sạch bảng mỗi khi render lại table
                     for (let i = 0; i < items.length; i++) {
@@ -218,13 +239,13 @@ aria-hidden="true" role="dialog">
                         $('#tbody-table').append(`
                             <tr>
                             <th scope="row">${response[0].data[i]?.id}</th>
-                            <td class="text-truncate content1" style="max-width:150px"><span class="tooltiptext"><img  class="img" src="/img/product-1.png">${response[0].data[i]?.name}</span> </td>
+                            <td class="text-truncate content1" style="max-width:150px"><span class="tooltiptext"><img  class="img" src="/${response[0].data[i]?.img}">${response[0].data[i]?.name}</span> </td>
                             <td class="text-truncate" style="max-width:150px">${response[0].data[i]?.describe}</td>
                             <td>${response[0].data[i]?.price}</td>
                             <td>${sales_status}</td>
-                            <td><a href="${route_edit}" data-id="${response[0].data[i]?.id}" data-role="${response[0].data[i]?.group_role}" class="btn btn-primary editButton ${roleUser?'':'disabled'}"
+                            <td><a href="${route_edit}" data-id="${response[0].data[i]?.id}" data-role="${response[0].data[i]?.group_role}" class="btn btn-primary editButton}"
                         ><i class="fas fa-edit"></i></a>
-                        <a  id="delete${response[0].data[i]?.id}"  href="javascript:void(0)" data-id="${response[0].data[i]?.id}" data-role="${response[0].data[i]?.group_role}" class="btn btn-danger toDelete ${roleUser? '':'disabled'}" data-bs-toggle="modal"  data-bs-target="#deleteModal"
+                        <a  id="delete${response[0].data[i]?.id}"  href="javascript:void(0)" data-id="${response[0].data[i]?.id}" data-role="${response[0].data[i]?.group_role}" class="btn btn-danger toDelete" ${roleUser?'data-bs-toggle="modal"':''}  data-bs-target="#deleteModal"
                         data-id="${response[0].data[i]?.id}"><i class="fa-solid fa-trash-can"></i></a>
 
                         </td>
@@ -312,8 +333,16 @@ aria-hidden="true" role="dialog">
 
             let id = $(this).data('id');
             let role=$(this).data('role');
-            console.log(role)
-
+            console.log(roleUser)
+            if (roleUser === false) {
+                    $('.ajax-modal').modal('hide');
+                    Swal.fire({
+                        title: 'Bạn không đủ quyền',
+                        icon: "error",
+                        timer: 2000,
+                    });
+                    return;
+                }
 
                 $('#deleteBtn').show();
                 $('#deleteIcon').html(
@@ -378,12 +407,45 @@ aria-hidden="true" role="dialog">
         //                 .replace(/đ/g, 'd').replace(/Đ/g, 'D');
         // }
 
-        // Ví dụ sử dụng
+        // search theo từng cú gõ
+        $('#getName').on("keyup", function() {
 
+            const  priceMin= $('#getpriceMin').val();
+            const priceMax = $('#getpriceMax').val();
+            const is_sales= $('#getIs_sales').val()?? 3;
 
+            let name = $(this).val();
+            console.log(is_sales)
+            renderTable (page,perPage,name,priceMin,priceMax,is_sales);
+        });
+        //search
+
+        $('#ajaxForm-search').on('submit', (function(event) {
+            event.preventDefault();
+            $('.error-messages').html('');
+            let formData2 = new FormData(event.target);
+            const name = formData2.get('name')?? '';
+            const  priceMin= formData2.get('priceMin');
+            const priceMax = formData2.get('priceMax');
+            const is_sales= formData2.get('is_sales') ?? 3;
+
+            renderTable (page,perPage,name,priceMin,priceMax,is_sales);
+
+        }));
+        // xử lý cập nhật dữ liệu sau khi xóa input tìm kiếm
+        $('#resetBtn').on("click", function() {
+            renderTable (page,perPage,name,priceMin,priceMax,is_sales);
+        });
 
 
 
     });
 </script>
+@endsection
+
+
+@section('footer')
+    <main class="">
+        <h6 class="text-center" style="font-weight: bold">@ Trần Phát Đạt</h6>
+    </main>
 @endsection
