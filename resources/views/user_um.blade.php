@@ -2,8 +2,7 @@
 
 @section('container')
     {{-- modal add --}}
-    <div class="modal fade ajax-modal" id="addModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true"
-        >
+    <div class="modal fade ajax-modal" id="addModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <form action="" id="ajaxForm">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -172,7 +171,7 @@
     </div>
     {{-- search --}}
     <div class="row justify-content-center" style="width:100%">
-        <div class="col-md-8">
+        <div class="col-md-8 col-sm-12 col-xs-12">
             <form id="ajaxForm-search" style="margin-top:30px;">
                 <div style="" class="form_search">
                     <div class="form-group">
@@ -188,7 +187,7 @@
                     <div class="form-group">
                         <p>Nhóm</p>
                         <select name="group_role" class="form-select" id="">
-                            <option value="" disabled selected hidden>Chọn nhóm</option>
+                            <option value="" disabled selected hidden>Chọn nhóm user</option>
                             <option value="0">Admin</option>
                             <option value="1">Editor</option>
                             <option value="2">Reviwer</option>
@@ -206,14 +205,12 @@
                         </select>
                     </div>
                 </div>
-                <div style="display: flex;gap:80px;flex-wrap: wrap;" class="form_search">
+                <div style="display: flex;flex-wrap: wrap;" class="form_search">
                     <div>
                         <a href="javascript:void(0)" style="margin-bottom:40px !important;margin-top:40px;"
-                        @if (Auth::user()->group_role === 0) data-bs-toggle="modal" @else @endif
-                        data-role={{ Auth::user()->group_role }}
-                        data-bs-toggle="modal"
-                        data-bs-target="#addModal"
-                             class="btn btn-info mb-3 toAdd">
+                            @if (Auth::user()->group_role === 0) data-bs-toggle="modal" @else @endif
+                            data-role={{ Auth::user()->group_role }} data-bs-target="#addModal"
+                            class="btn btn-info mb-3 toAdd">
                             <i class="fa-solid fa-user-plus" style="color: white"></i>
                             Thêm thành viên</a>
 
@@ -236,40 +233,42 @@
 
                 </div>
             </div>
+            <div class="table-reponsive">
 
-            <table class="table" id="user-table">
-                <form action="">
-                    <input type="hidden" value="{{ Auth::user()->id }}" id="idUser">
-                    <input type="hidden" value="{{ Auth::user()->group_role }}" id="roleUser">
-                </form>
-                <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col" class="text-truncate" style="max-width:140px">Tên</th>
-                        <th scope="col" class="text-truncate" style="max-width:140px">Email</th>
-                        <th scope="col">Nhóm</th>
-                        <th scope="col">Trạng Thái</th>
-                        <th scope="col">Hành Động</th>
-                    </tr>
-                </thead>
-                <tbody id="tbody-table">
-
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col" class="text-truncate" style="max-width:140px">Tên</th>
-                        <th scope="col" class="text-truncate" style="max-width:140px">Email</th>
-                        <th scope="col">Nhóm</th>
-                        <th scope="col">Trạng Thái</th>
-                        <th scope="col">Hành Động</th>
-                    </tr>
+                <table class="table" id="user-table">
+                    <form action="">
+                        <input type="hidden" value="{{ Auth::user()->id }}" id="idUser">
+                        <input type="hidden" value="{{ Auth::user()->group_role }}" id="roleUser">
+                    </form>
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col" class="text-truncate" style="max-width:50px">Tên</th>
+                            <th scope="col" class="text-truncate" style="max-width:50px">Email</th>
+                            <th scope="col">Nhóm</th>
+                            <th scope="col">Trạng Thái</th>
+                            <th scope="col">Hành Động</th>
+                        </tr>
                     </thead>
-                </tfoot>
+                    <tbody id="tbody-table">
 
-            </table>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col" class="text-truncate" style="max-width:50px">Tên</th>
+                            <th scope="col" class="text-truncate" style="max-width:50px">Email</th>
+                            <th scope="col">Nhóm</th>
+                            <th scope="col">Trạng Thái</th>
+                            <th scope="col">Hành Động</th>
+                        </tr>
+                        </thead>
+                    </tfoot>
+
+                </table>
+            </div>
             <div class="row">
-                <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                <div class="col-10- col-sm-10 col-md-6 col-lg-6 col-xl-6">
                     <div class="d-flex align-items-center gap-2">
                         <label for="perPage">Hiển thị</label>
                         <select class="form-select form-select-sm w-auto" id="perPage">
@@ -282,7 +281,7 @@
                     </div>
                 </div>
 
-                <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                <div class="col-xs-10 col-sm-10 col-md-6 col-lg-6 col-xl-6">
                     <nav aria-label="Page user management navigation" aria-label="Page navigation example">
                         <ul class="pagination justify-content-end" id="paginate"></ul>
 
@@ -294,7 +293,6 @@
 
 
     <script>
-
         let perPage = 10;
         let page = 1;
         let name = '';
@@ -342,28 +340,30 @@
                         const items = response[0].data ?? [];
 
                         // hiện from- to
-                        if(total<10){
+                        if (total < 10) {
                             $('#fromTo').html(null);
-                            perPage=total;
+                            perPage = total;
                             $('#fromTo').append(`
                          <p style="text-align:right;">Hiển thị từ ${from} ~ ${perPage} trong tổng số <strong>${total}</strong> user</p>
                     `);
-                        }if(total===1){
+                        }
+                        if (total === 1) {
                             $('#fromTo').html(null);
                             $('#fromTo').append(`
                          <p style="text-align:right;">Hiển thị  ${from}  trong tổng số <strong>${total}</strong> user</p>
                     `);
-                        }if(total>=10){
+                        }
+                        if (total >= 10) {
                             $('#fromTo').html(null);
                             $('#fromTo').append(`
                          <p style="text-align:right;">Hiển thị từ ${from} ~ ${perPage} trong tổng số <strong>${total}</strong> user</p>
-                    `   );
+                    `);
                         }
-                        if(total===0){
+                        if (total === 0) {
                             $('#fromTo').html(null);
                             $('#fromTo').append(`
                          <p style="text-align:right;">Không có sản phẩm hiển thị</strong> user</p>
-                    `   );
+                    `);
                         }
 
                         // tạo bảng table
@@ -404,7 +404,7 @@
 
                         `);
                         }
-                        if(response[0].total<20){
+                        if (response[0].total < 20) {
                             return;
                         }
 
@@ -451,7 +451,15 @@
             // add
             $('body').on('click', '.toAdd', function() {
                 let role = $(this).data('role');
-                //
+                if (roleUser != 0) {
+                    $('.ajax-modal').modal('hide');
+                    Swal.fire({
+                        title: 'Bạn không đủ quyền',
+                        icon: "error",
+                        timer: 2000,
+                    });
+                    return;
+                }
             });
 
             const form = $('#ajaxForm')[0];

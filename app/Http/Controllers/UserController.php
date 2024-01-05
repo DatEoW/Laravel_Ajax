@@ -104,7 +104,8 @@ class UserController extends Controller
             }
 
         }catch (\Illuminate\Auth\Access\AuthorizationException $e) {
-            abort(403);
+            $errorMessage = $e->getMessage();
+            return response()->json(['error' => $errorMessage], 403);
         }
 
 

@@ -32,7 +32,7 @@ class ProductPolicy
     {
         return in_array($user->group_role, [0, 1])
         ? Response::allow()
-        : abort(403);
+        : Response::deny('Bạn không đủ quyền');
 
 
     }
@@ -45,7 +45,7 @@ class ProductPolicy
         return in_array($user->group_role, [0, 1])
 
         ? Response::allow()
-        : abort(403);
+        : Response::deny('Bạn không đủ quyền');
 
     }
 

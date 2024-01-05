@@ -39,4 +39,11 @@ footer {
     text-align: center;
     font-weight: bold;
 }
-
+@media screen and (max-width: 400px) {
+    .text-truncate{
+        max-width: 50px !important;
+    }
+    .page-link{
+        padding: 3px 6px !important;
+    }
+}
