@@ -90,7 +90,7 @@
         </div>
         <div style="width:200px" class="mb-5">
             <button type="submit" id="updateBtn" class="btn btn-primary">Cập nhật</button>
-            <button type="button" class="btn btn-warning" id="resetBtn">Reset</button>
+            <button type="button" class="btn btn-warning" id="cancelBtn">Hủy</button>
         </div>
 
 
@@ -234,11 +234,10 @@
 
             });
 
-            $('#imgInp').on("load", function(event) {
+            $('#imgInp').on("change", function(event) {
                 $('#imgError').html('');
                 let img = $(this).val();
                 let pic_size = event.target.files[0].size;
-
                 if (pic_size > 2 * 1024 * 1024) {
                     $('#imgError').html('Hình không được vượt quá 2MB');
                     return;

@@ -208,11 +208,11 @@
 
             });
 
-            $('#imgInp').on("load", function(event) {
+            $('#imgInp').on("change", function(event) {
                 $('#imgError').html('');
                 let img = $(this).val();
                 let pic_size = event.target.files[0].size;
-
+                console.log(123)
                 if (pic_size > 2 * 1024 * 1024) {
                     $('#imgError').html('Hình không được vượt quá 2MB');
                     return;
