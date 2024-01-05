@@ -233,7 +233,7 @@
 
                 </div>
             </div>
-            <div class="table-reponsive">
+            <div class="table-responsive">
 
                 <table class="table" id="user-table">
                     <form action="">
