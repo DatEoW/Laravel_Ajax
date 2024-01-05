@@ -26,7 +26,7 @@ class ProductController extends Controller
         $temp = 0;
         $is_sales = $request->is_sales ?? 3;
 
-        $product = Product::orderBy('id', 'desc')->where('is_delete', 1);
+        $product = Product::orderBy('created_at', 'desc')->where('is_delete', 1);
 
         if ($name != null) {
             $product = $product->where('name', 'like', "%$name%");
@@ -103,7 +103,9 @@ class ProductController extends Controller
                     'email' => ':attribute phải là định dạng email',
                     'numeric' => ':attribute phải là số',
                     'mimes' => ':attribute phải là file ảnh đuôi .png,.jpg.jpeg',
-                    'max' => ':attribute không được lớn hơn 2mb'
+                    'max' => ':attribute không được lớn hơn 2mb',
+                    //
+
                 ],
                 [
                     'name' => 'Tên sản phẩm',
@@ -121,8 +123,15 @@ class ProductController extends Controller
                 $input['img'] = $absolutePath;
                 $path = Storage::putFileAs('/public/fake_images', $file, $fileName);
             }
-            $product = Product::create($input);
-            return redirect()->route('product.index');
+            if(ctype_digit(mb_substr($input['name'], 0, 1, 'UTF-8'))){
+                $error='Ký tự đầu tiên phải là chữ';
+                return response()->json(['error' => $error], 422);
+            }else{
+                $product = Product::create($input);
+                return redirect()->route('product.index');
+            }
+
+
         } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
             $errorMessage = $e->getMessage();
             return response()->json(['error' => $errorMessage], 403);
@@ -194,9 +203,15 @@ class ProductController extends Controller
                 $input['img'] = $absolutePath;
                 $path = Storage::putFileAs('/public/fake_images', $file, $fileName);
             }
+            if(ctype_digit(mb_substr($input['name'], 0, 1, 'UTF-8'))){
+                $error='Ký tự đầu tiên phải là chữ';
+                return response()->json(['error' => $error], 422);
+            }else{
+                $product = Product::find($input['id'])->update($input);
+                return redirect()->route('product.index');
+            }
 
-            $product = Product::find($input['id'])->update($input);
-            return redirect()->route('product.index');
+
         } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
             $errorMessage = $e->getMessage();
             return response()->json(['error' => $errorMessage], 403);

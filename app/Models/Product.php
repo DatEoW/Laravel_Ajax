@@ -65,10 +65,12 @@ class Product extends Model
                 'ù' => 'u', 'ú' => 'u', 'ủ' => 'u', 'ũ' => 'u', 'ụ' => 'u',
                 'ừ' => 'u', 'ứ' => 'u', 'ử' => 'u', 'ữ' => 'u', 'ự' => 'u',
                 'ỳ' => 'y', 'ý' => 'y', 'ỷ' => 'y', 'ỹ' => 'y', 'ỵ' => 'y',
+                'Đ'=>'D','đ'=>'d',
             ];
 
             $firstChar = mb_substr($product->name, 0, 1, 'UTF-8');
             $unaccentedChar=strtoupper(str_replace(array_keys($replace), $replace, $firstChar));
+          
 
             $product->id = $unaccentedChar . str_pad($intId + 1, 9, '0', STR_PAD_LEFT);
         });

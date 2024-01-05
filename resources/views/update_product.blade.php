@@ -174,6 +174,7 @@
                     error: function(error) {
                         console.log(error)
                         if (error) {
+                            $('#nameError').html(error.responseJSON.error);
                             if (error.responseJSON.errors.name) {
                                 $('#nameError').html(error.responseJSON.errors.name);
                                 $('#nameEr').attr('style', 'border:1px solid red');
