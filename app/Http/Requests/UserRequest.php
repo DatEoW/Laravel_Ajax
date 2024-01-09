@@ -19,25 +19,33 @@ class UserRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
+    public function isUpdateRequest(): bool
+    {
+        return $this->route()->getActionMethod() === 'update';
+    }
     public function rules(): array
     {
-        return [
-            'email' => 'required|email',
+        $rules= [
+            'name' => 'required',
             'password' => 'required',
-            'name'=>'required',
-            'email_add' => 'required|email',
-            'password_add' => 'required',
-            'name_add'=>'required',
+            'email' => 'required|unique:mst_users|email',
+            'group_role' => 'required',
         ];
+        if ($this->isUpdateRequest()) {
+            $rules['email'] = 'required|email';
+        }
+        return $rules;
     }
     public function messages()
     {
         return [
             'email.email' => 'Email không đúng định dạng',
             'email.required' => 'Email không được bỏ trống',
+            'email.unique'=>'Email không được trùng',
+            'name.required'=>'Tên không được bỏ trống',
+            'group_role.required'=>'Nhóm user không được bỏ trống',
             'password.required' => 'Mật khẩu không được bỏ trống',
 
         ];
     }
-
 }

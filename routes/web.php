@@ -20,9 +20,9 @@ use App\Http\Controllers\UserController1;
 Route::get('', function () {
     return view('product_pm');
 })->middleware(['auth']);
-Route::resource('user', UserController::class)->middleware(['auth','role']);
+Route::resource('user', UserController::class)->middleware(['auth']);
 
-Route::post('/changeUser',[UserController::class,'changeUser'])->name('changeUser')->middleware(['auth','role']);
+Route::post('/changeUser',[UserController::class,'changeUser'])->name('changeUser')->middleware(['auth']);
 
 Route::resource('product', ProductController::class)->middleware(['auth']);
 

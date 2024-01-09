@@ -24,7 +24,7 @@
         <div class="row col-md-12 col-sm-12 d-flex justify-content-center">
             <div class="col-md-6">
                 <div class="form-group">
-                    <input type="hidden" name="is_delete" value="1">
+                    <input type="hidden" name="is_delete" value="0">
                     <input type="hidden" name="id" value="{{ $product->id }}">
                     <div class="mb-3 d-flex justify-content-between">
                         <label for="exampleFormControlInput1" class="form-label">Tên sản phẩm</label>

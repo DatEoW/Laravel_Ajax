@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProductRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -14,49 +15,28 @@ use Illuminate\Support\Facades\Storage;
 class ProductController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Show dữ liệu product, search ,sort theo các input : name,email,priceMin,PriceMax
+     * các function query được hỗ trợ với Scope và mutator
+     * @param  $request
+     * @return \Illuminate\View\View|\Illuminate\Http\JsonResponse
      */
     public function index(Request $request)
     {
+
         $perPage = $request->perPage ?? 10;
-
-        $name = $request->name ?? null;
-        $priceMin = $request->priceMin ?? 0;
-        $priceMax = $request->priceMax ?? 0;
-        $temp = 0;
-        $is_sales = $request->is_sales ?? 3;
-
-        $product = Product::orderBy('created_at', 'desc')->where('is_delete', 1);
-
-        if ($name != null) {
-            $product = $product->where('name', 'like', "%$name%");
-        }
-        if ($is_sales != 3) {
-            $product = $product->where('is_sales',  $is_sales);
-        }
-        if ($priceMin != 0 && $priceMax != 0) {
-            if ($priceMin > $priceMax) {
-                $priceMin = $temp;
-                $priceMax = $priceMin;
-                $priceMin = $temp;
-            } else if ($priceMin < 0 || $priceMax < 0) {
-                return response()->json(['mess' => 'Giá tiền không được là số âm'], 201);
-            }
-            $product->whereBetween('price', [$priceMin, $priceMax]);
-        }
-
-
+        $name = $request->name ;
+        $priceMin = $request->priceMin;
+        $priceMax = $request->priceMax ;
+        $is_sales = $request->is_sales;
+        $product = Product::orderBy('created_at', 'desc')->where('is_delete', 0);
+        $product->byName($name);
+        $product->byStatus($is_sales);
+        $product->byPrice($priceMin,$priceMax);
         $paginate = $product->paginate($perPage);
         $paginate->getCollection()->transform(function ($product) {
 
-            if ($product->is_sales == 0) {
-                $product->sales_text = 'Ngừng Bán';
-            } else if ($product->is_sales == 1) {
-                $product->sales_text = 'Đang bán';
-            } else if ($product->is_sales == 2) {
-                $product->sales_text = 'Hết Hàng';
-            }
-            return $product;
+           $product->getSalesTextAttribute();
+           return $product;
         });
         if ($request->ajax()) {
             return response()->json([$paginate], 201);
@@ -64,57 +44,31 @@ class ProductController extends Controller
         return view('product_pm');
     }
 
-    /**
-     * Show the form for creating a new resource.
+      /**
+     * Chuyển sang trang thêm sản phẩm
+     *
+     *  @return \Illuminate\View\View
      */
     public function create()
     {
-        try {
+
             $this->authorize('create', Product::class);
             return view('add_product');
-        } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
-            $errorMessage = $e->getMessage();
-            return response()->json(['error' => $errorMessage], 403);
-        }
+
     }
 
 
-    /**
-     * Store a newly created resource in storage.
+       /**
+     * Thêm product
+     * @param  $request
+     * @return \Illuminate\Http\JsonResponse|void
      */
-    public function store(Request $request)
+    public function store(ProductRequest $request)
     {
         try {
             $this->authorize('create', Product::class);
+
             $input = $request->all();
-            // dd($input);
-            $validator = $request->validate(
-                [
-                    'name' => 'required|min:5',
-                    'price' => 'required|numeric|min:0',
-                    'is_sales' => 'required',
-                    'img' => 'mimes:png,jpg,jpeg|max:2000'
-                ],
-                [
-                    'required' => ':attribute không được để trống',
-                    'name.min' => ':attribute không được bé hơn 5',
-                    'price.min' => ':attribute không được bé hơn 0',
-                    'unique' => ':attribute không được trùng',
-                    'email' => ':attribute phải là định dạng email',
-                    'numeric' => ':attribute phải là số',
-                    'mimes' => ':attribute phải là file ảnh đuôi .png,.jpg.jpeg',
-                    'max' => ':attribute không được lớn hơn 2mb',
-                    //
-
-                ],
-                [
-                    'name' => 'Tên sản phẩm',
-                    'price' => 'Giá bán',
-                    'is_sales' => 'Tình trạng',
-                    'img' => 'File',
-                ],
-
-            );
             if (!empty($input['img'])) {
                 $file = $request->file('img');
                 $fileName = $file->hashName();
@@ -123,6 +77,7 @@ class ProductController extends Controller
                 $input['img'] = $absolutePath;
                 $path = Storage::putFileAs('/public/fake_images', $file, $fileName);
             }
+
             if(ctype_digit(mb_substr($input['name'], 0, 1, 'UTF-8'))){
                 $error='Ký tự đầu tiên phải là chữ';
                 return response()->json(['error' => $error], 422);
@@ -146,55 +101,30 @@ class ProductController extends Controller
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
+       /**
+     * Chuyển sang trang chỉnh sửa sản phẩm
+     *  @param string $id
+     *  @return \Illuminate\View\View
      */
     public function edit(string $id)
     {
-        try {
+
             $this->authorize('update', Product::class);
             $product = Product::find($id);
             return view('update_product', compact('product'));
-        } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
-            $errorMessage = $e->getMessage();
-            return response()->json(['error' => $errorMessage], 403);
-        }
+
     }
 
-    /**
-     * Update the specified resource in storage.
+        /**
+     * Thực hiện chỉnh sửa Product
+     * @param  $request
+     * @return \Illuminate\Http\JsonResponse|void
      */
-    public function update(Request $request)
+    public function update(ProductRequest $request)
     {
         try {
             $this->authorize('update', Product::class);
             $input = $request->all();
-
-            $validator = $request->validate(
-                [
-                    'name' => 'required|min:5',
-                    'price' => 'required|numeric|min:0',
-                    'is_sales' => 'required',
-                    'img' => 'mimes:png,jpg,jpeg|max:2000'
-                ],
-                [
-                    'required' => ':attribute không được để trống',
-                    'name.min' => ':attribute không được bé hơn 5',
-                    'price.min' => ':attribute không được bé hơn 0',
-                    'unique' => ':attribute không được trùng',
-                    'email' => ':attribute phải là định dạng email',
-                    'numeric' => ':attribute phải là số',
-                    'mimes' => ':attribute phải là file ảnh đuôi .png,.jpg.jpeg',
-                    'max' => ':attribute không được lớn hơn 2mb'
-                ],
-                [
-                    'name' => 'Tên sản phẩm',
-                    'price' => 'Giá bán',
-                    'is_sales' => 'Tình trạng',
-                    'img' => 'File',
-                ],
-
-            );
             if (!empty($input['img'])) {
                 $file = $request->file('img');
                 $fileName = $file->hashName();
@@ -218,8 +148,10 @@ class ProductController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
+       /**
+     * Xóa product
+     * @param  string $id
+     * @return \Illuminate\Http\JsonResponse|void
      */
     public function destroy(string $id)
     {

@@ -11,44 +11,32 @@ use Illuminate\Support\Facades\Gate;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
+       /**
+     * Hiển thị dữ liệu(search,sort,phân trang,...)
+     * @param  $request
+     * @return \Illuminate\View\View|\Illuminate\Http\JsonResponse
      */
     public function index(Request $request)
     {
 
         $this->authorize('viewAny', User::class);
         $perPage = $request->perPage ?? 10;
-        $name = $request->name ?? 0;
-        $email = $request->email ?? 0;
+        $name = $request->name;
+        $email = $request->email;
         $is_active = $request->is_active;
-        $search_active = $request->is_active ?? 2;
-        $user = User::orderBy('id', 'desc')->where('is_delete', 1);
-        if ($search_active != 2) {
-            $user = $user->where('is_active', $is_active);
-        }
-        if (!empty($name)) {
-            $user = $user->where('name', 'like', "%$name%");
-        }
-        if (!empty($email)) {
-            $user = $user->where('email', 'like', "%$email%");
-        }
-
-        if (isset($request->group_role) && ($request->group_role != 3)) {
-            $user = $user->where('group_role', $request->group_role);
-        }
+        $group_role=$request->group_role;
+        $user = User::orderBy('id', 'desc')->where('is_delete', 0);
+        $user->active($is_active);
+        $user->byName($name);
+        $user->byEmail($email);
+        $user->byGroupRole($group_role);
         $paginate = $user->paginate($perPage);
         $paginate->getCollection()->transform(function ($user) {
-            $user->active_text = $user->is_active ? 'Hoạt động' : 'Tạm khóa';
-            if ($user->group_role == 0) {
-                $user->group_text = 'Admin';
-            } else if ($user->group_role == 1) {
-                $user->group_text = 'Editor';
-            } else if ($user->group_role == 2) {
-                $user->group_text = 'Reviewer';
-            }
+            $user->getActiveTextAttribute();
+            $user->getGroupTextAttribute();
             return $user;
         });
+
         if ($request->ajax()) {
             return response()->json([$paginate], 201);
         }
@@ -63,10 +51,12 @@ class UserController extends Controller
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
+        /**
+     * Thêm user
+     * @param  $request
+     * @return \Illuminate\Http\JsonResponse|void
      */
-    public function store(Request $request)
+    public function store(UserRequest $request)
     {
         try{
             $this->authorize('create', User::class);
@@ -76,27 +66,10 @@ class UserController extends Controller
                     'password' => $request->password,
                     'email' => $request->email,
                     'is_active' => 1,
-                    'is_delete' => 1,
+                    'is_delete' => 0,
                     'group_role' => $request->group_role,
                 ];
-                $validator = $request->validate([
-                    'name' => 'required',
-                    'password' => 'required',
-                    'email' => 'required|unique:mst_users|email',
-                    'group_role' => 'required',
 
-
-                ], [
-                    'required' => ':attribute Không được để trống',
-                    'unique' => ':attribute Không được trùng',
-                    'email' => ':attribute Phải là định dạng email'
-                ], [
-                    'name' => 'Tên',
-                    'password' => 'Mật khẩu',
-                    'email' => 'Email',
-                    'group_role' => 'Nhóm'
-
-                ]);
                 $user = User::create($input);
                 return response()->json([
                     'success' => 'Thêm thành viên mới thành công !',
@@ -119,8 +92,10 @@ class UserController extends Controller
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
+     /**
+     * Truy cập vào form chỉnh sửa user
+     * @param  $id
+     * @return \Illuminate\Http\JsonResponse
      */
     public function edit(string $id)
     {
@@ -134,16 +109,18 @@ class UserController extends Controller
         }
     }
 
-    /**
-     * Update the specified resource in storage.
+     /**
+     * Chỉnh sửa thông tin user
+     * @param  $id
+     * @return \Illuminate\Http\JsonResponse|void
      */
-    public function update(Request $request)
+    public function update(UserRequest $request)
     {
 
         try {
             $this->authorize('update', User::class);
 
-            // Hành động được phép
+
             $id = $request->id;
             $user = User::find($id);
 
@@ -154,20 +131,7 @@ class UserController extends Controller
                 $is_active = $request->is_active ?? 1;
 
                 $group_role = $request->group_role;
-                $validator = $request->validate([
-                    'name' => 'required',
-                    'password' => 'required',
-                    'email' => 'required|email',
-                ], [
-                    'required' => ':attribute Không được để trống',
-                    'unique' => ':attribute Không được trùng',
-                    'email' => ':attribute Phải là định dạng email'
-                ], [
-                    'name' => 'Tên',
-                    'password' => 'Mật khẩu',
-                    'email' => 'Email',
 
-                ]);
                 $user->name = $name;
                 $user->email = $email;
                 $user->password = $password;
@@ -195,6 +159,11 @@ class UserController extends Controller
     {
         //
     }
+     /**
+     * Điều chỉnh trạng thái user(khóa,mở khóa,xóa)
+     * @param  $id
+     * @return \Illuminate\Http\JsonResponse|void
+     */
     public function changeUser(Request $request)
     {
         try {
@@ -202,7 +171,7 @@ class UserController extends Controller
             $user = User::find($request->id);
             $phuongThuc = $request->phuongThuc;
             if ($phuongThuc === 'delete') {
-                $user->is_delete = 0;
+                $user->is_delete = 1;
                 $user->save();
             }
             if ($phuongThuc === 'lock') {

@@ -356,7 +356,7 @@
                         if (total >= 10) {
                             $('#fromTo').html(null);
                             $('#fromTo').append(`
-                         <p style="text-align:right;">Hiển thị từ ${from} ~ ${perPage} trong tổng số <strong>${total}</strong> user</p>
+                         <p style="text-align:right;">Hiển thị từ ${from} ~ ${to} trong tổng số <strong>${total}</strong> user</p>
                     `);
                         }
                         if (total === 0) {
@@ -574,7 +574,7 @@
                         $('#ajaxForm-update')[0].reset();
                     },
                     error: function(error) {
-                        $('.ajax-modal').modal('hide');
+                        // $('.ajax-modal').modal('hide');
                         if (error.status == 403) {
 
                             Swal.fire({
@@ -601,10 +601,10 @@
                 event.preventDefault();
                 $('.error-messages').html('');
                 let formData2 = new FormData(form2);
-                const name = formData2.get('name');
-                const email = formData2.get('email');
-                const group_role = formData2.get('group_role') ?? '';
-                const is_active = formData2.get('is_active') ?? 2;
+                 name = formData2.get('name');
+                 email = formData2.get('email');
+                 group_role = formData2.get('group_role') ?? '';
+                 is_active = formData2.get('is_active') ?? 2;
 
                 renderTable(page, perPage, name, email, group_role, is_active);
 
@@ -622,7 +622,7 @@
             // click page
             $('#paginate').on('click', function(event) {
                 const toPage = Number(event.target.dataset.page);
-                // console.log(event.target.dataset.page)
+                console.log(event.target.dataset.page)
                 if (toPage?.toString() === 'NaN') {
                     return;
                 }

@@ -12,7 +12,7 @@ class UserPolicy
      */
     public function viewAny(User $user): bool
     {
-        return in_array($user->group_role, [0, 1]);
+        return in_array($user->group_role,[User::ADMIN,User::EDITOR]);
     }
 
     /**
@@ -20,7 +20,7 @@ class UserPolicy
      */
     public function view(User $user, User $model): bool
     {
-        return in_array($user->group_role, [0, 1]);
+        return in_array($user->group_role,[User::ADMIN,User::EDITOR]);
     }
 
     /**
@@ -28,7 +28,7 @@ class UserPolicy
      */
     public function create(User $user): Response
     {
-        return $user->group_role===0 ? Response::allow()
+        return $user->group_role===User::ADMIN? Response::allow()
         : Response::deny('Bạn không đủ quyền');
     }
 
@@ -37,7 +37,7 @@ class UserPolicy
      */
     public function update(?User $user): Response
     {
-        return $user->group_role===0 ? Response::allow()
+        return $user->group_role===User::ADMIN ? Response::allow()
         : Response::deny('Bạn không đủ quyền');
 
     }
@@ -48,7 +48,7 @@ class UserPolicy
     public function changeUser(User $user): Response
     {
 
-        return $user->group_role===0 ? Response::allow()
+        return $user->group_role===User::ADMIN ? Response::allow()
         : Response::deny('Bạn không đủ quyền');
 
     }

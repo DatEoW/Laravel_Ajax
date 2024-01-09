@@ -18,7 +18,7 @@ class User extends Seeder
                 'name' => 'Đạt ' . rand(0,10),
                 'email'=>'datbandat'.$i.rand(0,10).'@gmail.com',
                 'is_active'=>1,
-                'is_delete'=>1,
+                'is_delete'=>0,
                 'group_role'=>rand(1,2),
                 'password'=>bcrypt('hihi'),
             ]);

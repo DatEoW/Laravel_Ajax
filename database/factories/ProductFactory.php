@@ -22,7 +22,7 @@ class ProductFactory extends Factory
             'name' =>'ẻạt'.rand(0,5),
             'price'=>rand(0,50000),
                 'is_sales'=>rand(0,2),
-                'is_delete'=>1,
+                'is_delete'=>0,
                 'describe'=>fake()->text(),
                 'img' => 'storage/'.$images[array_rand($images)],
         ];

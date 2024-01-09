@@ -22,7 +22,7 @@
         <div class="row col-md-12 d-flex justify-content-center">
             <div class="col-md-6">
                 <div class="form-group">
-                    <input type="hidden" name="is_delete" value="1">
+                    <input type="hidden" name="is_delete" value="0">
                     <div class="mb-3 d-flex justify-content-between">
                         <label for="exampleFormControlInput1" class="form-label">Tên sản phẩm</label>
                         <input type="text" class="form-control w-75" name="name" id="nameEr"
@@ -148,7 +148,7 @@
 
 
                             $('#nameError').html(error.responseJSON.error);
-                            
+
                             if (error.responseJSON.errors.name) {
                                 $('#nameError').html(error.responseJSON.errors.name);
 

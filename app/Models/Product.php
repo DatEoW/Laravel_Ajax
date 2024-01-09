@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class Product extends Model
 {
@@ -13,6 +14,10 @@ class Product extends Model
     protected $table='mst_products';
     protected $primaryKey='id';
 
+     /**
+     * cho phép id khóa chính type string
+     *
+     */
     protected $keyType='string';
     protected $fillable = [
         'name',
@@ -24,6 +29,11 @@ class Product extends Model
         'img',
 
     ];
+     /**
+     * Xử lý ký tự đặc biệt với Helper Str
+     * @param  number
+     * @return void
+     */
     protected static function boot()
     {
         parent::boot();
@@ -39,42 +49,60 @@ class Product extends Model
                 $intId = (int)substr($lastProductId->id, 1, 9);
             }
             //xử lý ký tự đặc biệt
-
-            $replace = [
-                'À' => 'A', 'Á' => 'A', 'Ả' => 'A', 'Ã' => 'A', 'Ạ' => 'A',
-                'Ằ' => 'A', 'Ắ' => 'A', 'Ẳ' => 'A', 'Ẵ' => 'A', 'Ặ' => 'A',
-                'Ầ' => 'A', 'Ấ' => 'A', 'Ẩ' => 'A', 'Ẫ' => 'A', 'Ậ' => 'A',
-                'È' => 'E', 'É' => 'E', 'Ẻ' => 'E', 'Ẽ' => 'E', 'Ẹ' => 'E',
-                'Ề' => 'E', 'Ế' => 'E', 'Ể' => 'E', 'Ễ' => 'E', 'Ệ' => 'E',
-                'Ì' => 'I', 'Í' => 'I', 'Ỉ' => 'I', 'Ĩ' => 'I', 'Ị' => 'I',
-                'Ò' => 'O', 'Ó' => 'O', 'Ỏ' => 'O', 'Õ' => 'O', 'Ọ' => 'O',
-                'Ồ' => 'O', 'Ố' => 'O', 'Ổ' => 'O', 'Ỗ' => 'O', 'Ộ' => 'O',
-                'Ơ' => 'O', 'Ờ' => 'O', 'Ớ' => 'O', 'Ở' => 'O', 'Ỡ' => 'O', 'Ợ' => 'O',
-                'Ù' => 'U', 'Ú' => 'U', 'Ủ' => 'U', 'Ũ' => 'U', 'Ụ' => 'U',
-                'Ừ' => 'U', 'Ứ' => 'U', 'Ử' => 'U', 'Ữ' => 'U', 'Ự' => 'U',
-                'Ỳ' => 'Y', 'Ý' => 'Y', 'Ỷ' => 'Y', 'Ỹ' => 'Y', 'Ỵ' => 'Y',
-                'à' => 'a', 'á' => 'a', 'ả' => 'a', 'ã' => 'a', 'ạ' => 'a',
-                'ằ' => 'a', 'ắ' => 'a', 'ẳ' => 'a', 'ẵ' => 'a', 'ặ' => 'a',
-                'ầ' => 'a', 'ấ' => 'a', 'ẩ' => 'a', 'ẫ' => 'a', 'ậ' => 'a',
-                'è' => 'e', 'é' => 'e', 'ẻ' => 'e', 'ẽ' => 'e', 'ẹ' => 'e',
-                'ề' => 'e', 'ế' => 'e', 'ể' => 'e', 'ễ' => 'e', 'ệ' => 'e',
-                'ì' => 'i', 'í' => 'i', 'ỉ' => 'i', 'ĩ' => 'i', 'ị' => 'i',
-                'ò' => 'o', 'ó' => 'o', 'ỏ' => 'o', 'õ' => 'o', 'ọ' => 'o',
-                'ồ' => 'o', 'ố' => 'o', 'ổ' => 'o', 'ỗ' => 'o', 'ộ' => 'o',
-                'ơ' => 'o', 'ờ' => 'o', 'ớ' => 'o', 'ở' => 'o', 'ỡ' => 'o', 'ợ' => 'o',
-                'ù' => 'u', 'ú' => 'u', 'ủ' => 'u', 'ũ' => 'u', 'ụ' => 'u',
-                'ừ' => 'u', 'ứ' => 'u', 'ử' => 'u', 'ữ' => 'u', 'ự' => 'u',
-                'ỳ' => 'y', 'ý' => 'y', 'ỷ' => 'y', 'ỹ' => 'y', 'ỵ' => 'y',
-                'Đ'=>'D','đ'=>'d',
-            ];
-
-            $firstChar = mb_substr($product->name, 0, 1, 'UTF-8');
-            $unaccentedChar=strtoupper(str_replace(array_keys($replace), $replace, $firstChar));
-          
+            $firstChar=Str::charAt($product->name,0);
+            $unaccentedChar=strtoupper(Str::slug($firstChar));
+            Log::info($firstChar);
+            Log::info($unaccentedChar);
 
             $product->id = $unaccentedChar . str_pad($intId + 1, 9, '0', STR_PAD_LEFT);
         });
 
+
+    }
+    protected $appends=['sales_text'];
+    public function getSalesTextAttribute()
+    {
+        $sales_text = '';
+
+        if ($this->is_sales == 0) {
+            $sales_text = '<p class="text-danger fw-bold">Ngừng Bán</p>';
+        } else if ($this->is_sales == 1) {
+            $sales_text = '<p class="text-success">Đang bán</p>';
+        } else if ($this->is_sales == 2) {
+            $sales_text = '<p class="text-warning">Hết Hàng</p>';
+        }
+        return $sales_text;
+    }
+    public function scopeByName( $query,$name=''): void
+    {
+        if (!empty($name)||$name==0) {
+             $query->where('name', 'like', "%$name%");
+        }
+
+    }
+    public function scopeByStatus( $query,$is_sales=2): void
+    {
+        if (isset($is_sales)&& $is_sales != 3) {
+            $query->where('is_sales', $is_sales);
+        }
+
+    }
+    public function scopeByPrice($query,$priceMin=0,$priceMax=0): void
+    {
+        if(isset($priceMin)||isset($priceMax)){
+            if(isset($priceMin) && !isset($priceMax)){
+                $query->where('price','>=',$priceMin)->getQuery()->orders = [];
+                $query->orderBy('price','asc');
+            }else if(!isset($priceMin)&&isset($priceMax)){
+                $query->where('price','<',$priceMax)->getQuery()->orders = [];
+                $query->orderBy('price','desc')->toSql();
+
+            }else{
+                $query->whereBetween('price',[$priceMin,$priceMax])->getQuery()->orders = [];
+                $query->orderBy('price','asc');
+            }
+
+        }
 
     }
 

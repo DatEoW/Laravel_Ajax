@@ -14,7 +14,7 @@ class ProductPolicy
      */
     public function viewAny(User $user): bool
     {
-        return in_array($user->group_role, [0,1,2]);
+        return in_array($user->group_role, [User::ADMIN,User::EDITOR,User::REVIEWER]);
     }
 
     /**
@@ -22,7 +22,7 @@ class ProductPolicy
      */
     public function view(User $user, Product $product): bool
     {
-        return in_array($user->group_role, [0,1,2]);
+        return in_array($user->group_role, [User::ADMIN,User::EDITOR,User::REVIEWER]);
     }
 
     /**
@@ -30,7 +30,7 @@ class ProductPolicy
      */
     public function create(User $user): Response
     {
-        return in_array($user->group_role, [0, 1])
+        return in_array($user->group_role, [User::ADMIN,User::EDITOR])
         ? Response::allow()
         : Response::deny('Bạn không đủ quyền');
 
@@ -42,7 +42,7 @@ class ProductPolicy
      */
     public function update(User $user): Response
     {
-        return in_array($user->group_role, [0, 1])
+        return in_array($user->group_role,[User::ADMIN,User::EDITOR])
 
         ? Response::allow()
         : Response::deny('Bạn không đủ quyền');
@@ -54,7 +54,7 @@ class ProductPolicy
      */
     public function delete(User $user): Response
     {
-        return in_array($user->group_role, [0, 1])
+        return in_array($user->group_role, [User::ADMIN,User::EDITOR])
         ? Response::allow()
         : Response::deny('Bạn không đủ quyền');
     }
