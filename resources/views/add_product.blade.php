@@ -41,7 +41,7 @@
                         <label for="exampleFormControlTextarea1" class="form-label">Mô tả</label>
                         <textarea class="form-control w-75" id="editor" rows="3" name="describe"></textarea>
                     </div>
-
+                    <span id="describeError" class="text-danger error-messages d-block mb-3" style="text-align: right"></span>
                     <div class="mb-3 d-flex justify-content-between">
                         <span>Trạng thái</span>
                         <select class="form-select w-75" aria-label="Default select example" id="is_salesEr"
@@ -166,6 +166,11 @@
                                 $('#imgError').html(error.responseJSON.errors.img);
                                 $('#imgEr').attr('style', 'border:1px solid red');
                             }
+                            if (error.responseJSON.errors.describe) {
+                                $('#describeError').html(error.responseJSON.errors.describe);
+
+                            }
+
 
                         }
 

@@ -78,6 +78,11 @@ class Product extends Model
 
     }
     protected $appends=['sales_text'];
+      /**
+     * Thêm mới giá trị sales_text mỗi khi đọc dữ liệu và chuyển đổi sale dựa trên is_active
+     * @param  number
+     * @return string
+     */
     public function getSalesTextAttribute()
     {
         $sales_text = '';

@@ -88,9 +88,9 @@ class User extends Authenticatable
     {
         $active_text = '';
 
-        if ($this->is_active == 0) {
+        if ($this->is_active == User::NOTACTIVE) {
             $active_text = '<p class="text-danger fw-bold">Tạm Khóa</p>';
-        } elseif ($this->is_active == 1) {
+        } elseif ($this->is_active == User::ACTIVE) {
             $active_text = '<p class="text-success">Hoạt Động</p>';
         }
         return $active_text;

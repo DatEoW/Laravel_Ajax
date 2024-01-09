@@ -27,7 +27,8 @@ class ProductRequest extends FormRequest
             'name' => 'required|min:5',
                     'price' => 'required|numeric|min:0',
                     'is_sales' => 'required',
-                    'img' => 'mimes:png,jpg,jpeg|max:2000'
+                    'img' => 'mimes:png,jpg,jpeg|max:2000',
+                    'describe'=>'max:150'
 
         ];
 
@@ -43,7 +44,9 @@ class ProductRequest extends FormRequest
             'email' => ':attribute phải là định dạng email',
             'numeric' => ':attribute phải là số',
             'mimes' => ':attribute phải là file ảnh đuôi .png,.jpg.jpeg',
-            'max' => ':attribute không được lớn hơn 2mb',
+            'img.max' => ':attribute không được lớn hơn 2mb',
+            'describe.max'=>':attribute không được quá 150 ký tự'
+
             ];
     }
     public function attributes(){
@@ -52,6 +55,7 @@ class ProductRequest extends FormRequest
             'price' => 'Giá bán',
             'is_sales' => 'Trạng thái',
             'img' => 'File',
+            'describe'=>'Mô tả',
         ];
     }
 }
