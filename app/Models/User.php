@@ -21,6 +21,12 @@ class User extends Authenticatable
     const ADMIN = 0;
     const EDITOR = 1;
     const REVIEWER = 2;
+    const NOSEARCHROLE=3;
+    const ACTIVE =1;
+    const NOTACTIVE=0;
+    const NOSEARCHACTIVE=2;
+    const DELETED=1;
+    const NOTDELETE=0;
     protected $table = 'mst_users';
     protected $fillable = [
         'name',
@@ -64,11 +70,11 @@ class User extends Authenticatable
     {
         $group_text = '';
 
-        if ($this->group_role == 0) {
+        if ($this->group_role == User::ADMIN) {
             $group_text = '<p class="text-primary fw-bold">Admin</p>';
-        } elseif ($this->group_role == 1) {
+        } elseif ($this->group_role == User::EDITOR) {
             $group_text = 'Editor';
-        } elseif ($this->group_role == 2) {
+        } elseif ($this->group_role == User::REVIEWER) {
             $group_text = 'Reviewer';
         }
         return $group_text;
@@ -108,9 +114,9 @@ class User extends Authenticatable
      * @param $is_active
      * @return string|void
      */
-    public function scopeActive($query, $is_active = 2): void
+    public function scopeActive($query, $is_active = User::NOSEARCHACTIVE): void
     {
-        if (isset($is_active) && $is_active != 2) {
+        if (isset($is_active) && $is_active != User::NOSEARCHACTIVE) {
             $query->where('is_active', $is_active);
         }
     }
@@ -132,9 +138,9 @@ class User extends Authenticatable
      * @param $group_role
      * @return string|void
      */
-    public function scopeByGroupRole($query, $group_role = 2): void
+    public function scopeByGroupRole($query, $group_role = User::NOSEARCHROLE): void
     {
-        if (isset($group_role) && ($group_role != 3)) {
+        if (isset($group_role) && ($group_role != User::NOSEARCHROLE)) {
             $query->where('group_role', $group_role);
         }
     }

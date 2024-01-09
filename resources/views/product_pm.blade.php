@@ -61,7 +61,7 @@
                         <div style="margin-top: 20px;margin-right:20px">~</div>
                         <div style="width:30%">
                             <span>Giá bán từ</span>
-                            <input type="number" class="form-control" style="width:90%" name="priceMax" id="getpriceMax">
+                            <input type="text" class="form-control" style="width:90%" name="priceMax" id="getpriceMax">
                         </div>
                     </div>
 
@@ -312,7 +312,7 @@
             $('#paginate').on('click', function(event) {
                 const toPage = Number(event.target.dataset.page);
                 if (toPage?.toString() === 'NaN') {
-                    // console.log(toPage)
+
                     return;
                 }
                 page = toPage;
@@ -326,7 +326,7 @@
 
                 let id = $(this).data('id');
                 let role = $(this).data('role');
-                console.log(roleUser)
+
                 if (roleUser === false) {
                     $('.ajax-modal').modal('hide');
                     Swal.fire({
@@ -397,7 +397,7 @@
 
 
             // search theo từng cú gõ
-            $('#getName').on("keypress", function() {
+            $('#getName').on("keyup", function() {
 
                 priceMin = $('#getpriceMin').val();
                 priceMax = $('#getpriceMax').val();
@@ -406,32 +406,129 @@
                 name = $(this).val();
                 renderTable(page, perPage, name, priceMin, priceMax, is_sales);
             });
-            $('#getpriceMin').on('keypress', function() {
-                console.log(123)
+            $('#getpriceMin').on('keyup', function() {
                 priceMin = $(this).val();
                 priceMax = $('#getpriceMax').val();
 
-                if (Number(priceMin) > Number(priceMax)) {
-                    $('#priceError').html('Giá min không thể lớn hơn giá max');
-                } else {
-                    $('#priceError').html(null);
+
+                if (priceMin == '') {
+                    $('#searchBtn').prop('disabled', false);
                 }
+                else if (Number(priceMin) > Number(priceMax)) {
+                    if(priceMax==''){
+
+                    }else{
+                        $('#priceError').html('Nhập giá Max cao hơn giá Min');
+                    $('#searchBtn').prop('disabled', true);
+                    }
+
+
+                } else if (isNaN(Number(priceMin))){
+
+                    $('#priceError').html('Giá chỉ được nhập số');
+                }else{
+                    $('#searchBtn').prop('disabled', false);
+                    $('#priceError').html(null)
+                }
+
                 var keycode = event.which || event.keyCode;
 
                 if (!(keycode >= 48 && keycode <= 57)) {
-                    $('#priceError').html('Giá chỉ được nhập số');
+
+                    if(keycode==8){
+                        if (priceMin === '') {
+                            $('#searchBtn').prop('disabled', false);
+                        }else if(Number(priceMin)<Number(priceMax)){
+                            $('#searchBtn').prop('disabled', false);
+                        }
+                        else{
+
+                        }
+                    }
+                    else if (keycode == 9 ||keycode == 13 || keycode == 18) {
+
+
+                        if (priceMin === '') {
+                            $('#searchBtn').prop('disabled', false);
+                        }
+                    } else {
+                        $('#priceError').html('Giá chỉ được nhập số');
+
+                        event.preventDefault();
+                    }
 
                 }
 
             })
+            $('#getpriceMin').on('keypress', function(){
+
+                var keycode = event.which || event.keyCode;
+
+                if (!(keycode >= 48 && keycode <= 57)){
+                    event.preventDefault();
+                }
+
+            });
+            $('#getpriceMax').on('keypress', function(){
+
+            var keycode = event.which || event.keyCode;
+
+            if (!(keycode >= 48 && keycode <= 57)){
+                event.preventDefault();
+            }
+
+            });
             $('#getpriceMax').on('keyup', function() {
                 priceMax = $(this).val();
+
+
                 priceMin = $('#getpriceMin').val();
-                if (Number(priceMin) > Number(priceMax)) {
-                    $('#priceError').html('Giá min không thể lớn hơn giá max');
-                } else {
+                if (priceMax == '') {
+                    $('#searchBtn').prop('disabled', false);
+                }
+                else if (Number(priceMin) > Number(priceMax)) {
+                    $('#priceError').html('Nhập giá Max cao hơn giá Min');
+                    $('#searchBtn').prop('disabled', true);
+
+                } else if (isNaN(Number(priceMax))){
+
+                    $('#priceError').html('Giá chỉ được nhập số');
+                }else{
+                    $('#searchBtn').prop('disabled', false);
                     $('#priceError').html(null)
                 }
+                var keycode = event.which || event.keyCode;
+
+
+                if (!(keycode >= 48 && keycode <= 57)) {
+
+
+                    if(keycode==8){
+                        if (priceMin === '') {
+                            $('#searchBtn').prop('disabled', false);
+                        }else if(Number(priceMin)<Number(priceMax)){
+                            $('#searchBtn').prop('disabled', false);
+                        }
+                        else{
+
+                        }
+                    }
+                    else if (keycode == 9 ||keycode == 13 || keycode == 18) {
+
+
+                        if (priceMin === '') {
+                            $('#searchBtn').prop('disabled', false);
+                        }
+                    } else {
+                        $('#priceError').html('Giá chỉ được nhập số');
+
+                        event.preventDefault();
+                    }
+
+                }
+
+
+
             })
 
 
@@ -450,15 +547,19 @@
                     $('#priceError').html('Giá tiền không được là số âm');
                     return;
                 }
-                if (Number(priceMin) > Number(priceMax)) {
+                if(priceMax!=''){
+                    if (Number(priceMin) > Number(priceMax)) {
                     $('#priceError').html('Giá min không được lớn hơn giá max');
                     return;
                 }
+                }
+
                 renderTable(page, perPage, name, priceMin, priceMax, is_sales);
 
             }));
             // xử lý cập nhật dữ liệu sau khi xóa input tìm kiếm
             $('#resetBtn').on("click", function() {
+                $('#searchBtn').prop('disabled', false);
                 renderTable(page, perPage, name, priceMin, priceMax, is_sales);
             });
 

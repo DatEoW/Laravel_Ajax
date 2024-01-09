@@ -25,7 +25,7 @@ class UserController extends Controller
         $email = $request->email;
         $is_active = $request->is_active;
         $group_role=$request->group_role;
-        $user = User::orderBy('id', 'desc')->where('is_delete', 0);
+        $user = User::orderBy('id', 'desc')->where('is_delete', User::NOTDELETE);
         $user->active($is_active);
         $user->byName($name);
         $user->byEmail($email);
@@ -66,7 +66,7 @@ class UserController extends Controller
                     'password' => $request->password,
                     'email' => $request->email,
                     'is_active' => 1,
-                    'is_delete' => 0,
+                    'is_delete' => User::NOTDELETE,
                     'group_role' => $request->group_role,
                 ];
 
@@ -171,15 +171,15 @@ class UserController extends Controller
             $user = User::find($request->id);
             $phuongThuc = $request->phuongThuc;
             if ($phuongThuc === 'delete') {
-                $user->is_delete = 1;
+                $user->is_delete = User::DELETED;
                 $user->save();
             }
             if ($phuongThuc === 'lock') {
-                $user->is_active = 0;
+                $user->is_active = User::NOTACTIVE;
                 $user->save();
             }
             if ($phuongThuc === 'unlock') {
-                $user->is_active = 1;
+                $user->is_active = User::ACTIVE;
                 $user->save();
             }
             return response()->json(['phuongThuc' => $phuongThuc], 201);

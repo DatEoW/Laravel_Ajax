@@ -28,7 +28,7 @@ class ProductController extends Controller
         $priceMin = $request->priceMin;
         $priceMax = $request->priceMax ;
         $is_sales = $request->is_sales;
-        $product = Product::orderBy('created_at', 'desc')->where('is_delete', 0);
+        $product = Product::orderBy('created_at', 'desc')->where('is_delete', Product::NOTDELETE);
         $product->byName($name);
         $product->byStatus($is_sales);
         $product->byPrice($priceMin,$priceMax);
@@ -159,7 +159,7 @@ class ProductController extends Controller
             $this->authorize('delete', Product::class);
             $product = Product::find($id);
 
-        $product->is_delete = 0;
+        $product->is_delete = Product::DELETED;
         $product->save();
         return response()->json(['success' => 'Xóa thành công'], 201);
         }catch (\Illuminate\Auth\Access\AuthorizationException $e) {

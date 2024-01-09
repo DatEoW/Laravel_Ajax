@@ -29,6 +29,13 @@ class Product extends Model
         'img',
 
     ];
+    const DANGBAN =1;
+    const HETHANG=2;
+    const NGUNGBAN=0;
+    const NOSEARCHSALES=3;
+    const DELETED=1;
+    const NOTDELETE=0;
+
      /**
      * Xử lý ký tự đặc biệt với Helper Str
      * @param  number
@@ -56,6 +63,17 @@ class Product extends Model
 
             $product->id = $unaccentedChar . str_pad($intId + 1, 9, '0', STR_PAD_LEFT);
         });
+        static::updating(function ($product) {
+
+
+            $idOld=$product->id;
+            $firstChar=Str::charAt($product->name,0);
+            $unaccentedChar=strtoupper(Str::slug($firstChar));
+            Log::info($firstChar);
+            Log::info($unaccentedChar);
+
+            $product->id = substr_replace($idOld, $unaccentedChar, 0, 1);
+        });
 
 
     }
@@ -64,11 +82,11 @@ class Product extends Model
     {
         $sales_text = '';
 
-        if ($this->is_sales == 0) {
+        if ($this->is_sales == Product::NGUNGBAN) {
             $sales_text = '<p class="text-danger fw-bold">Ngừng Bán</p>';
-        } else if ($this->is_sales == 1) {
+        } else if ($this->is_sales == Product::DANGBAN) {
             $sales_text = '<p class="text-success">Đang bán</p>';
-        } else if ($this->is_sales == 2) {
+        } else if ($this->is_sales == Product::HETHANG) {
             $sales_text = '<p class="text-warning">Hết Hàng</p>';
         }
         return $sales_text;
@@ -80,9 +98,9 @@ class Product extends Model
         }
 
     }
-    public function scopeByStatus( $query,$is_sales=2): void
+    public function scopeByStatus( $query,$is_sales= Product::NOSEARCHSALES): void
     {
-        if (isset($is_sales)&& $is_sales != 3) {
+        if (isset($is_sales)&& $is_sales != Product::NOSEARCHSALES) {
             $query->where('is_sales', $is_sales);
         }
 
@@ -96,7 +114,6 @@ class Product extends Model
             }else if(!isset($priceMin)&&isset($priceMax)){
                 $query->where('price','<',$priceMax)->getQuery()->orders = [];
                 $query->orderBy('price','desc')->toSql();
-
             }else{
                 $query->whereBetween('price',[$priceMin,$priceMax])->getQuery()->orders = [];
                 $query->orderBy('price','asc');
