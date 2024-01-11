@@ -33,11 +33,7 @@ class ProductController extends Controller
         $product->byStatus($is_sales);
         $product->byPrice($priceMin,$priceMax);
         $paginate = $product->paginate($perPage);
-        $paginate->getCollection()->transform(function ($product) {
-
-           $product->getSalesTextAttribute();
-           return $product;
-        });
+        
         if ($request->ajax()) {
             return response()->json([$paginate], 201);
         }
