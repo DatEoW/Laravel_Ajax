@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use App\Models\User;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\UserRequest;
@@ -18,8 +19,7 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-
-        $this->authorize('viewAny', User::class);
+        // dd($request->all());
         $perPage = $request->perPage ?? 10;
         $name = $request->name;
         $email = $request->email;
@@ -31,18 +31,8 @@ class UserController extends Controller
         $user->byEmail($email);
         $user->byGroupRole($group_role);
         $paginate = $user->paginate($perPage);
-        $paginate->getCollection()->transform(function ($user) {
-            $user->getActiveTextAttribute();
-            $user->getGroupTextAttribute();
-            return $user;
-        });
-
-        if ($request->ajax()) {
-            return response()->json([$paginate], 201);
-        }
-        return view('user_um');
+        return response()->json($paginate, 201);
     }
-
     /**
      * Show the form for creating a new resource.
      */

@@ -24,23 +24,23 @@ class ProductController extends Controller
     {
 
         $perPage = $request->perPage ?? 10;
-        $name = $request->name ;
+        $name = $request->name;
         $priceMin = $request->priceMin;
-        $priceMax = $request->priceMax ;
+        $priceMax = $request->priceMax;
         $is_sales = $request->is_sales;
         $product = Product::orderBy('created_at', 'desc')->where('is_delete', Product::NOTDELETE);
         $product->byName($name);
         $product->byStatus($is_sales);
-        $product->byPrice($priceMin,$priceMax);
+        $product->byPrice($priceMin, $priceMax);
         $paginate = $product->paginate($perPage);
-        
+
         if ($request->ajax()) {
             return response()->json([$paginate], 201);
         }
         return view('product_pm');
     }
 
-      /**
+    /**
      * Chuyển sang trang thêm sản phẩm
      *
      *  @return \Illuminate\View\View
@@ -48,13 +48,12 @@ class ProductController extends Controller
     public function create()
     {
 
-            $this->authorize('create', Product::class);
-            return view('add_product');
-
+        $this->authorize('create', Product::class);
+        return view('add_product');
     }
 
 
-       /**
+    /**
      * Thêm product
      * @param  $request
      * @return \Illuminate\Http\JsonResponse|void
@@ -74,15 +73,13 @@ class ProductController extends Controller
                 $path = Storage::putFileAs('/public/fake_images', $file, $fileName);
             }
 
-            if(ctype_digit(mb_substr($input['name'], 0, 1, 'UTF-8'))){
-                $error='Ký tự đầu tiên phải là chữ';
+            if (ctype_digit(mb_substr($input['name'], 0, 1, 'UTF-8'))) {
+                $error = 'Ký tự đầu tiên phải là chữ';
                 return response()->json(['error' => $error], 422);
-            }else{
+            } else {
                 $product = Product::create($input);
                 return redirect()->route('product.index');
             }
-
-
         } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
             $errorMessage = $e->getMessage();
             return response()->json(['error' => $errorMessage], 403);
@@ -97,7 +94,7 @@ class ProductController extends Controller
         //
     }
 
-       /**
+    /**
      * Chuyển sang trang chỉnh sửa sản phẩm
      *  @param string $id
      *  @return \Illuminate\View\View
@@ -105,13 +102,12 @@ class ProductController extends Controller
     public function edit(string $id)
     {
 
-            $this->authorize('update', Product::class);
-            $product = Product::find($id);
-            return view('update_product', compact('product'));
-
+        $this->authorize('update', Product::class);
+        $product = Product::find($id);
+        return view('update_product', compact('product'));
     }
 
-        /**
+    /**
      * Thực hiện chỉnh sửa Product
      * @param  $request
      * @return \Illuminate\Http\JsonResponse|void
@@ -129,39 +125,36 @@ class ProductController extends Controller
                 $input['img'] = $absolutePath;
                 $path = Storage::putFileAs('/public/fake_images', $file, $fileName);
             }
-            if(ctype_digit(mb_substr($input['name'], 0, 1, 'UTF-8'))){
-                $error='Ký tự đầu tiên phải là chữ';
+            if (ctype_digit(mb_substr($input['name'], 0, 1, 'UTF-8'))) {
+                $error = 'Ký tự đầu tiên phải là chữ';
                 return response()->json(['error' => $error], 422);
-            }else{
+            } else {
                 $product = Product::find($input['id'])->update($input);
                 return redirect()->route('product.index');
             }
-
-
         } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
             $errorMessage = $e->getMessage();
             return response()->json(['error' => $errorMessage], 403);
         }
     }
 
-       /**
+    /**
      * Xóa product
      * @param  string $id
      * @return \Illuminate\Http\JsonResponse|void
      */
     public function destroy(string $id)
     {
-        try{
+        try {
             $this->authorize('delete', Product::class);
             $product = Product::find($id);
 
-        $product->is_delete = Product::DELETED;
-        $product->save();
-        return response()->json(['success' => 'Xóa thành công'], 201);
-        }catch (\Illuminate\Auth\Access\AuthorizationException $e) {
+            $product->is_delete = Product::DELETED;
+            $product->save();
+            return response()->json(['success' => 'Xóa thành công'], 201);
+        } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
             $errorMessage = $e->getMessage();
             return response()->json(['error' => $errorMessage], 403);
         }
-
     }
 }
