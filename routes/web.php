@@ -22,7 +22,7 @@ Route::get('', function () {
 })->middleware(['auth']);
 Route::resource('user', UserController::class)->middleware(['auth']);
 
-Route::post('/changeUser',[UserController::class,'changeUser'])->name('changeUser')->middleware(['auth']);
+Route::post('/changeUser', [UserController::class, 'changeUser'])->name('changeUser')->middleware(['auth']);
 
 Route::resource('product', ProductController::class)->middleware(['auth']);
 
@@ -42,13 +42,6 @@ Route::resource('product', ProductController::class)->middleware(['auth']);
 
 
 
-Route::get('/login',[AuthController::class,'to_login'])->name('to_login');
-Route::post('/login',[AuthController::class,'login'])->name('login');
-Route::delete('/logout',[AuthController::class,'logout'])->name('logout')->middleware('auth');
-
-
-
-
-
-
-
+Route::get('/login', [AuthController::class, 'to_login'])->name('to_login');
+Route::post('/login', [AuthController::class, 'login'])->name('login');
+Route::delete('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');

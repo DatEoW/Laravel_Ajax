@@ -25,7 +25,7 @@ class UserRequest extends FormRequest
     }
     public function rules(): array
     {
-        $rules= [
+        $rules = [
             'name' => 'required',
             'password' => 'required',
             'email' => 'required|unique:mst_users|email',
@@ -41,9 +41,9 @@ class UserRequest extends FormRequest
         return [
             'email.email' => 'Email không đúng định dạng',
             'email.required' => 'Email không được bỏ trống',
-            'email.unique'=>'Email không được trùng',
-            'name.required'=>'Tên không được bỏ trống',
-            'group_role.required'=>'Nhóm user không được bỏ trống',
+            'email.unique' => 'Email không được trùng',
+            'name.required' => 'Tên không được bỏ trống',
+            'group_role.required' => 'Nhóm user không được bỏ trống',
             'password.required' => 'Mật khẩu không được bỏ trống',
 
         ];

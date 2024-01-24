@@ -25,4 +25,4 @@ Route::post('/login', [AuthController::class, 'login'])->name('login');
 
 Route::resource('user', UserController::class)->middleware('auth:sanctum');
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
-Route::post('/changeUser', [AuthController::class, 'changeUser'])->middleware('auth:sanctum');
+Route::post('/changeUser', [UserController::class, 'changeUser'])->middleware('auth:sanctum');
