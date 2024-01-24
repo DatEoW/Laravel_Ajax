@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
@@ -15,15 +16,25 @@ class AuthController extends Controller
 {
     public function login(LoginRequest $request): Response
     {
-        if (Auth::attempt($request->all())) {
-            $user = Auth::user();
-            $token =  $user->createToken('MyApp')->plainTextToken;
+        $user = User::where('email', $request->email)->first();
+        $now = Carbon::now();
+        $remember_me = $request->remember_me;
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password], $remember_me)) {
+
+            $userAuth = Auth::user();
+            // add thông tin user
+            $user->last_login_at = $now;
+            $user->last_login_ip = $request->ip();
+            $user->save();
+            //
+            $token =  $userAuth->createToken('MyApp')->plainTextToken;
 
             $cookie = cookie('auth_token', $token, 60 * 24 * 7);
             $data = [
                 'status' => true,
                 'token' => $token,
-                'user' => $user,
+                'user' => $userAuth,
+                'test' => $remember_me,
             ];
             return response()->json($data, 200)->withCookie($cookie);
         }
