@@ -19,10 +19,12 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/userDetails', function (Request $request) {
     return $request->user();
 });
-Route::post('/login', [AuthController::class, 'login'])->name('login');
-// Route::get('/userDetails', [AuthController::class, 'userDetails'])->middleware('auth:sanctum');
-
-
-Route::resource('user', UserController::class)->middleware('auth:sanctum');
-Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
-Route::post('/changeUser', [UserController::class, 'changeUser'])->middleware('auth:sanctum');
+Route::resource('user', UserController::class);
+Route::post('/changeUser', [UserController::class, 'changeUser']);
+Route::controller(AuthController::class)->group(function () {
+    Route::post('login', 'login');
+    Route::post('register', 'register');
+    Route::post('logout', 'logout');
+    Route::post('refresh', 'refresh');
+    Route::get('me', 'me');
+});

@@ -17,9 +17,14 @@ class UserController extends Controller
      * @param  $request
      * @return \Illuminate\View\View|\Illuminate\Http\JsonResponse
      */
+
+
+    public function __construct()
+    {
+        $this->middleware('auth:api');
+    }
     public function index(Request $request)
     {
-        // dd($request->all());
         $perPage = $request->perPage ?? 10;
         $name = $request->name;
         $email = $request->email;
