@@ -141,7 +141,7 @@ class UserController extends Controller
                 $user->save();
                 return response()->json([
                     'success' => 'Cập nhật thành viên thành công !',
-                ], 201);
+                ], 200);
             }
         } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
             $errorMessage = $e->getMessage();

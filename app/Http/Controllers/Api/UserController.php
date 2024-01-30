@@ -36,7 +36,7 @@ class UserController extends Controller
         $user->byEmail($email);
         $user->byGroupRole($group_role);
         $paginate = $user->paginate($perPage);
-        return response()->json($paginate, 201);
+        return response()->json($paginate, 200);
     }
     /**
      * Show the form for creating a new resource.
