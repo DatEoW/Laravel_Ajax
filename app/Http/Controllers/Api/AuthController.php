@@ -14,47 +14,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 class AuthController extends Controller
 {
-    // public function login(LoginRequest $request): Response
-    // {
-    //     $user = User::where('email', $request->email)->first();
-    //     $now = Carbon::now();
-    //     $remember_me = $request->remember_me;
-    //     if (Auth::attempt(['email' => $request->email, 'password' => $request->password], $remember_me)) {
-
-    //         $userAuth = Auth::user();
-    //         // add thông tin user
-    //         $user->last_login_at = $now;
-    //         $user->last_login_ip = $request->ip();
-    //         $user->save();
-    //         //
-    //         $token =  $userAuth->createToken('MyApp')->plainTextToken;
-    //         $cookie = cookie('auth_token', $token, 60 * 24 * 7);
-    //         // $cookie = cookie('auth_token', $token, 60 * 24 * 7);
-    //         $data = [
-    //             'status' => true,
-    //             'token' => $token,
-    //             'user' => $userAuth,
-
-    //         ];
-    //         return response()->json($data, 200)->withCookie($cookie);
-    //     }
-    //     return Response(['message' => 'Email hoặc Mật khẩu không đúng', 'status' => false], 401);
-    // }
-
-    // /**
-    //  * Display the specified resource.
-    //  */
-    // public function logout(Request $request): response
-    // {
-    //     if (Auth::user()) {
-    //         auth()->user()->tokens()->delete();
-    //         $cookie = cookie()->forget('auth_token');
-    //         $response = response()->json(['data' => 'Đăng xuất thành công'], 200)->withCookie($cookie);
-    //         return $response;
-    //     }
-    // }
-
-
     // jwt
     public function __construct()
     {
@@ -79,8 +38,8 @@ class AuthController extends Controller
         $user->last_login_ip = $request->ip();
         $user->save();
         // thòi gian cookies tồn tại, 1 ngày hoặc vĩnh viễn
-        $expried = $remember_me ? null : 60 * 24 * 7;
-        $cookie = cookie('auth_token', $token, $expried, null, null, false, true);
+        $expries = $remember_me ? null : 60 * 24 * 7;
+        $cookie = cookie('auth_token', $token, $expries, '/', '192.168.55.62', true, true, false, 'None');
         return response()->json([
             'user' => $user,
         ])->withCookie($cookie);

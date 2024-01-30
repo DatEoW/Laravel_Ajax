@@ -33,6 +33,7 @@ class AuthController extends Controller
         $now = Carbon::now();
 
         $remember_me = $request->has('remember_me') ? true : false;
+
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password], $remember_me)) {
             $user->last_login_at = $now;
             $user->last_login_ip = $request->ip();
@@ -41,7 +42,6 @@ class AuthController extends Controller
             $request->session()->regenerate();
             return redirect()->route('product.index')->with('user', Auth::user());
         }
-
         return back()->with('error_password', 'Thông tin không chính xác')->withInput($request->input());
     }
 

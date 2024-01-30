@@ -56,23 +56,30 @@ class UserController extends Controller
      * @param  $request
      * @return \Illuminate\Http\JsonResponse|void
      */
+
     public function store(UserRequest $request)
     {
+        try {
+            $this->authorize('create', User::class);
+            if ($request->ajax()) {
+                $input = [
+                    'name' => $request->name,
+                    'password' => $request->password,
+                    'email' => $request->email,
+                    'is_active' => 1,
+                    'is_delete' => User::NOTDELETE,
+                    'group_role' => $request->group_role,
+                ];
 
-
-        $input = [
-            'name' => $request->name,
-            'password' => $request->password,
-            'email' => $request->email,
-            'is_active' => 1,
-            'is_delete' => User::NOTDELETE,
-            'group_role' => $request->group_role,
-        ];
-
-        $user = User::create($input);
-        return response()->json([
-            'success' => 'Thêm thành viên mới thành công !',
-        ], 201);
+                $user = User::create($input);
+                return response()->json([
+                    'success' => 'Thêm thành viên mới thành công !',
+                ], 201);
+            }
+        } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
+            $errorMessage = $e->getMessage();
+            return response()->json(['error' => $errorMessage], 403);
+        }
     }
 
     /**
@@ -90,9 +97,14 @@ class UserController extends Controller
      */
     public function edit(string $id)
     {
-
-        $user = User::find($id);
-        return response()->json($user);
+        try {
+            $this->authorize('update', User::class);
+            $user = User::find($id);
+            return response()->json($user);
+        } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
+            $errorMessage = $e->getMessage();
+            return response()->json(['error' => $errorMessage], 403);
+        }
     }
 
     /**
@@ -102,27 +114,39 @@ class UserController extends Controller
      */
     public function update(UserRequest $request)
     {
-        $id = $request->id;
-        $user = User::find($id);
 
-        $name = $request->name ?? $user->name;
-        $email = $request->email ?? $user->email;
-        $password = $request->password ?? $user->password;
-        $is_active = $request->is_active ?? 1;
-        $group_role = $request->group_role;
+        try {
+            $this->authorize('update', User::class);
 
-        $user->name = $name;
-        $user->email = $email;
-        $user->password = $password;
-        $user->is_active = $is_active;
 
-        if (isset($request->group_role)) {
-            $user->group_role = $group_role;
+            $id = $request->id;
+            $user = User::find($id);
+
+            if ($request->ajax()) {
+                $name = $request->name ?? $user->name;
+                $email = $request->email ?? $user->email;
+                $password = $request->password ?? $user->password;
+                $is_active = $request->is_active ?? 1;
+
+                $group_role = $request->group_role;
+
+                $user->name = $name;
+                $user->email = $email;
+                $user->password = $password;
+                $user->is_active = $is_active;
+
+                if (isset($request->group_role)) {
+                    $user->group_role = $group_role;
+                }
+                $user->save();
+                return response()->json([
+                    'success' => 'Cập nhật thành viên thành công !',
+                ], 201);
+            }
+        } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
+            $errorMessage = $e->getMessage();
+            return response()->json(['error' => $errorMessage], 403);
         }
-        $user->save();
-        return response()->json([
-            'success' => 'Cập nhật thành viên thành công !',
-        ], 201);
     }
 
 
@@ -140,22 +164,26 @@ class UserController extends Controller
      */
     public function changeUser(Request $request)
     {
-
-
-        $user = User::find($request->id);
-        $phuongThuc = $request->phuongThuc;
-        if ($phuongThuc === 'delete') {
-            $user->is_delete = User::DELETED;
-            $user->save();
+        try {
+            $this->authorize('update', User::class);
+            $user = User::find($request->id);
+            $phuongThuc = $request->phuongThuc;
+            if ($phuongThuc === 'delete') {
+                $user->is_delete = User::DELETED;
+                $user->save();
+            }
+            if ($phuongThuc === 'lock') {
+                $user->is_active = User::NOTACTIVE;
+                $user->save();
+            }
+            if ($phuongThuc === 'unlock') {
+                $user->is_active = User::ACTIVE;
+                $user->save();
+            }
+            return response()->json(['phuongThuc' => $phuongThuc], 201);
+        } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
+            $errorMessage = $e->getMessage();
+            return response()->json(['error' => $errorMessage], 403);
         }
-        if ($phuongThuc === 'lock') {
-            $user->is_active = User::NOTACTIVE;
-            $user->save();
-        }
-        if ($phuongThuc === 'unlock') {
-            $user->is_active = User::ACTIVE;
-            $user->save();
-        }
-        return response()->json(['phuongThuc' => $phuongThuc], 201);
     }
 }
