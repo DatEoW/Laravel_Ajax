@@ -23,9 +23,6 @@ Chức Năng 4.2: Mô tả chức năng 4.2.
 Hướng dẫn cài đặt dự án trên máy cục bộ của người sử dụng.
 
 ```bash
-git clone https://redmine.ig.webike.net/gitbucket/git/tran.phat.dat/intern_it58.git
-
-cd BAITAP_LARAVEL
 
 composer install
 

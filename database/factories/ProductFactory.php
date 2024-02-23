@@ -16,8 +16,10 @@ class ProductFactory extends Factory
      */
     public function definition(): array
     {
-        $images = Storage::disk('public')->files('fake_images');
-        static $img;
+        $publicPath = public_path('storage/fake_images');
+        $images = scandir($publicPath);
+        // Bỏ hai phần tử đầu tiên trong mảng $images là '.' và '..'
+        $images = array_slice($images, 2);
         return [
             'name' =>'ẻạt'.rand(0,5),
             'price'=>rand(0,50000),

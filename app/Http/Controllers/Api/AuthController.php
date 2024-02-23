@@ -39,7 +39,7 @@ class AuthController extends Controller
         $user->save();
         // thòi gian cookies tồn tại, 1 ngày hoặc vĩnh viễn
         $expries = $remember_me ? null : 60 * 24 * 7;
-        $cookie = cookie('auth_token', $token, $expries, '/', '192.168.55.62', true, true, false, 'None');
+        $cookie = cookie('auth_token', $token, $expries, '/', 'localhost', true, true, false, 'None');
         return response()->json([
             'user' => $user,
         ])->withCookie($cookie);
