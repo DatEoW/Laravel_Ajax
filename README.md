@@ -33,6 +33,10 @@ php artisan db:seed --class=User
 php artisan db:seed --class=Product
 
 php artisan serve
+```
+## Dữ liệu test
+- B1: Truy cập vào phpmyadmin và tìm danh sách email user với group_role là 0
+- B2: Đăng nhập vào web ( mật khẩu luôn được đặt là "hihi")
 
 
 
